@@ -1,0 +1,1118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Boo Writer</title>
+  <meta name="description" content="A calm, mindful space to write." />
+  <style>
+    :root{
+      --bg:#0b1630;         /* default: Navy */
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.08);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.72);
+      --muted2: rgba(255,255,255,.55);
+      --line: rgba(255,255,255,.14);
+      --btn: rgba(255,255,255,.10);
+      --btnHover: rgba(255,255,255,.14);
+      --shadow: 0 20px 60px rgba(0,0,0,.35);
+      --focus: rgba(255,255,255,.20);
+      --editorBg: transparent;
+      --editorText: var(--text);
+      --editorCaret: rgba(255,255,255,.85);
+      --link: rgba(255,255,255,.80);
+    }
+
+    /* Themes */
+    [data-theme="navy"]{
+      --bg:#0b1630;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.08);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.72);
+      --muted2: rgba(255,255,255,.55);
+      --line: rgba(255,255,255,.14);
+      --btn: rgba(255,255,255,.10);
+      --btnHover: rgba(255,255,255,.14);
+      --shadow: 0 20px 60px rgba(0,0,0,.35);
+      --editorBg: transparent;
+      --editorText: rgba(255,255,255,.92);
+      --editorCaret: rgba(255,255,255,.85);
+      --link: rgba(255,255,255,.80);
+    }
+    [data-theme="midnight"]{
+      --bg:#070910;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.08);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.70);
+      --muted2: rgba(255,255,255,.55);
+      --line: rgba(255,255,255,.14);
+      --btn: rgba(255,255,255,.10);
+      --btnHover: rgba(255,255,255,.14);
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+      --editorText: rgba(255,255,255,.92);
+      --editorCaret: rgba(255,255,255,.85);
+      --link: rgba(255,255,255,.80);
+    }
+    [data-theme="racing-green"]{
+      --bg:#0b1a14;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.08);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.70);
+      --muted2: rgba(255,255,255,.55);
+      --line: rgba(255,255,255,.14);
+      --btn: rgba(255,255,255,.10);
+      --btnHover: rgba(255,255,255,.14);
+      --shadow: 0 20px 60px rgba(0,0,0,.40);
+      --editorText: rgba(255,255,255,.92);
+      --editorCaret: rgba(255,255,255,.85);
+      --link: rgba(255,255,255,.80);
+    }
+    [data-theme="rose-quartz"]{
+      --bg:#1b0f16;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.08);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.70);
+      --muted2: rgba(255,255,255,.55);
+      --line: rgba(255,255,255,.14);
+      --btn: rgba(255,255,255,.10);
+      --btnHover: rgba(255,255,255,.14);
+      --shadow: 0 20px 60px rgba(0,0,0,.38);
+      --editorText: rgba(255,255,255,.92);
+      --editorCaret: rgba(255,255,255,.85);
+      --link: rgba(255,255,255,.80);
+    }
+    [data-theme="paper"]{
+      --bg:#f3f0e7;
+      --panel: rgba(0,0,0,.06);
+      --panel2: rgba(0,0,0,.08);
+      --text: rgba(18,18,18,.92);
+      --muted: rgba(18,18,18,.70);
+      --muted2: rgba(18,18,18,.55);
+      --line: rgba(0,0,0,.14);
+      --btn: rgba(0,0,0,.06);
+      --btnHover: rgba(0,0,0,.09);
+      --shadow: 0 20px 60px rgba(0,0,0,.18);
+      --editorBg: rgba(255,255,255,.65);
+      --editorText: rgba(18,18,18,.92);
+      --editorCaret: rgba(18,18,18,.85);
+      --link: rgba(18,18,18,.72);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: var(--bg);
+      color: var(--text);
+      overflow:hidden;
+    }
+
+    /* App container */
+    .app{
+      height:100%;
+      width:100%;
+      position:relative;
+      display:flex;
+      flex-direction:column;
+    }
+
+    /* Fade screens */
+    .screen{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+      opacity:0;
+      pointer-events:none;
+      transition: opacity 520ms ease;
+    }
+    .screen.active{
+      opacity:1;
+      pointer-events:auto;
+    }
+    .centerStack{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:18px;
+      text-align:center;
+    }
+    .welcomeTitle{
+      font-size: clamp(22px, 4vw, 34px);
+      letter-spacing:.2px;
+      font-weight: 520;
+      color: var(--text);
+      opacity:0;
+      transform: translateY(4px);
+      transition: opacity 700ms ease, transform 700ms ease;
+    }
+    .welcomeTitle.show{
+      opacity:1;
+      transform: translateY(0px);
+    }
+    .beginBtn{
+      border:1px solid var(--line);
+      background: var(--btn);
+      color: var(--text);
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 14px;
+      cursor:pointer;
+      opacity:0;
+      transform: translateY(6px);
+      transition: opacity 700ms ease, transform 700ms ease, background 180ms ease;
+    }
+    .beginBtn:hover{ background: var(--btnHover); }
+    .beginBtn.show{
+      opacity:1;
+      transform: translateY(0px);
+    }
+
+    /* Writer screen */
+    .writer{
+      position:absolute;
+      inset:0;
+      display:flex;
+      flex-direction:column;
+      opacity:0;
+      pointer-events:none;
+      transition: opacity 520ms ease;
+    }
+    .writer.active{
+      opacity:1;
+      pointer-events:auto;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding: 14px 16px;
+      gap:12px;
+    }
+    .toolbar{
+      display:flex;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+    .toolGroup{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding: 6px 8px;
+      border:1px solid var(--line);
+      border-radius: 999px;
+      background: var(--panel);
+      backdrop-filter: blur(10px);
+    }
+    .toolBtn{
+      border:1px solid transparent;
+      background: transparent;
+      color: var(--text);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      cursor:pointer;
+      transition: background 180ms ease, border-color 180ms ease, opacity 180ms ease;
+      white-space:nowrap;
+    }
+    .toolBtn:hover{ background: var(--btn); border-color: var(--line); }
+    .toolBtn:disabled{ opacity:.45; cursor:not-allowed; }
+    .toolBtn.toggled{ background: var(--btnHover); border-color: var(--line); }
+
+    select, input[type="number"]{
+      background: transparent;
+      color: var(--text);
+      border:1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      outline:none;
+    }
+    select{
+      cursor:pointer;
+    }
+    select option{
+      color:#111;
+    }
+    input[type="number"]{
+      width: 78px;
+      text-align:center;
+    }
+
+    .themeWrap{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding: 6px 8px;
+      border:1px solid var(--line);
+      border-radius: 999px;
+      background: var(--panel);
+      backdrop-filter: blur(10px);
+    }
+
+    .editorWrap{
+      flex:1;
+      display:flex;
+      align-items:stretch;
+      justify-content:center;
+      padding: 6px 16px 0;
+    }
+    .editor{
+      width:min(920px, 100%);
+      height:100%;
+      padding: 26px 22px;
+      border-radius: 18px;
+      border:1px solid var(--line);
+      background: var(--editorBg);
+      color: var(--editorText);
+      box-shadow: var(--shadow);
+      outline:none;
+      overflow:auto;
+      line-height: 1.65;
+      font-size: 18px;
+      caret-color: var(--editorCaret);
+      font-family: ui-serif, Georgia, "Times New Roman", Times, serif;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* Footer */
+    .footer{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding: 10px 16px 14px;
+      color: var(--muted2);
+      font-size: 12px;
+      gap:12px;
+    }
+    .footer a{
+      color: var(--link);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+    }
+    .footer a:hover{
+      border-bottom-color: var(--line);
+    }
+
+    /* Modal overlay */
+    .overlay{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+      background: rgba(0,0,0,.35);
+      opacity:0;
+      pointer-events:none;
+      transition: opacity 320ms ease;
+    }
+    [data-theme="paper"] .overlay{ background: rgba(0,0,0,.15); }
+
+    .overlay.active{
+      opacity:1;
+      pointer-events:auto;
+    }
+    .card{
+      width:min(520px, 100%);
+      border-radius: 22px;
+      border:1px solid var(--line);
+      background: var(--panel2);
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+    .card h2{
+      margin: 2px 0 12px;
+      font-size: 16px;
+      font-weight: 560;
+      color: var(--text);
+    }
+    .card p{
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .cardActions{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-top: 10px;
+    }
+    .primaryBtn, .secondaryBtn{
+      width:100%;
+      border-radius: 14px;
+      padding: 10px 12px;
+      cursor:pointer;
+      border:1px solid var(--line);
+      background: var(--btn);
+      color: var(--text);
+      font-size: 13px;
+      transition: background 180ms ease;
+    }
+    .primaryBtn:hover, .secondaryBtn:hover{ background: var(--btnHover); }
+
+    .closeArea{
+      margin-top: 14px;
+      display:flex;
+      justify-content:center;
+    }
+    .closeLink{
+      border:none;
+      background: transparent;
+      color: var(--muted);
+      cursor:pointer;
+      font-size: 12px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+    }
+    .closeLink:hover{
+      color: var(--text);
+      border-color: var(--line);
+      background: var(--btn);
+    }
+
+    /* Open document list */
+    .docList{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      max-height: 260px;
+      overflow:auto;
+      padding-right: 4px;
+    }
+    .docRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding: 10px 10px;
+      border:1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,.04);
+    }
+    [data-theme="paper"] .docRow{ background: rgba(0,0,0,.03); }
+    .docMeta{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+      min-width:0;
+    }
+    .docName{
+      font-size: 13px;
+      color: var(--text);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width: 290px;
+    }
+    .docSub{
+      font-size: 11px;
+      color: var(--muted2);
+    }
+    .docBtns{
+      display:flex;
+      gap:8px;
+      flex-shrink:0;
+    }
+
+    .sr-only{
+      position:absolute!important;
+      width:1px!important;
+      height:1px!important;
+      padding:0!important;
+      margin:-1px!important;
+      overflow:hidden!important;
+      clip:rect(0,0,0,0)!important;
+      white-space:nowrap!important;
+      border:0!important;
+    }
+  </style>
+</head>
+
+<body data-theme="navy">
+  <div class="app">
+
+    <!-- WELCOME SCREEN -->
+    <section id="welcomeScreen" class="screen active" aria-label="Welcome">
+      <div class="centerStack">
+        <div id="welcomeTitle" class="welcomeTitle">Welcome to Boo Writer.</div>
+        <button id="beginBtn" class="beginBtn" type="button">Let’s begin…</button>
+      </div>
+    </section>
+
+    <!-- WRITER SCREEN -->
+    <main id="writerScreen" class="writer" aria-label="Writer">
+      <header class="topbar">
+        <div class="toolbar">
+          <div class="toolGroup" aria-label="Document">
+            <button class="toolBtn" id="openBtn" type="button">Open document</button>
+            <button class="toolBtn" id="saveBtn" type="button" title="Save to Boo Writer">Save work</button>
+            <button class="toolBtn" id="finishBtn" type="button">Finish session</button>
+          </div>
+
+          <div class="toolGroup" aria-label="Typography">
+            <label class="sr-only" for="fontSelect">Font</label>
+            <select id="fontSelect" title="Font">
+              <option value='ui-serif, Georgia, "Times New Roman", Times, serif'>Serif</option>
+              <option value='ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif'>Sans</option>
+              <option value='"Iowan Old Style", "Palatino Linotype", Palatino, serif'>Palatino</option>
+              <option value='"Baskerville", "Baskerville Old Face", serif'>Baskerville</option>
+              <option value='"Garamond", "Adobe Garamond Pro", serif'>Garamond</option>
+              <option value='"Georgia", Georgia, serif'>Georgia</option>
+              <option value='"Times New Roman", Times, serif'>Times</option>
+              <option value='"Courier New", Courier, monospace'>Courier</option>
+              <option value='ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace'>Mono</option>
+              <option value='"Trebuchet MS", Trebuchet, sans-serif'>Trebuchet</option>
+              <option value='"Verdana", Verdana, sans-serif'>Verdana</option>
+              <option value='"Arial", Arial, sans-serif'>Arial</option>
+            </select>
+
+            <label class="sr-only" for="fontSize">Font size</label>
+            <select id="fontSize" title="Font size">
+              <!-- 8–36 -->
+            </select>
+
+            <button class="toolBtn" id="alignLeftBtn" type="button" title="Left align">Left</button>
+            <button class="toolBtn" id="alignJustifyBtn" type="button" title="Justify">Justify</button>
+            <button class="toolBtn" id="indentBtn" type="button" title="Indent first line">Indent</button>
+          </div>
+
+          <div class="toolGroup" aria-label="History">
+            <button class="toolBtn" id="undoBtn" type="button" title="Undo">Undo</button>
+            <button class="toolBtn" id="redoBtn" type="button" title="Redo">Redo</button>
+          </div>
+        </div>
+
+        <div class="themeWrap" aria-label="Theme">
+          <label class="sr-only" for="themeSelect">Theme</label>
+          <select id="themeSelect" title="Theme">
+            <option value="navy">Navy</option>
+            <option value="midnight">Midnight</option>
+            <option value="racing-green">Racing Green</option>
+            <option value="rose-quartz">Rose Quartz</option>
+            <option value="paper">Paper</option>
+          </select>
+        </div>
+      </header>
+
+      <section class="editorWrap" aria-label="Writing area">
+        <div
+          id="editor"
+          class="editor"
+          contenteditable="true"
+          role="textbox"
+          aria-multiline="true"
+          spellcheck="true"
+        ></div>
+      </section>
+
+      <footer class="footer">
+        <div>© 2025 James Ritchie &amp; Boo Industries…</div>
+        <div><a href="#" id="privacyLink">Privacy &amp; data usage statement</a></div>
+      </footer>
+    </main>
+
+    <!-- OPEN DOCUMENT MODAL -->
+    <div id="openOverlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="openTitle">
+      <div class="card">
+        <h2 id="openTitle">Open document</h2>
+        <p>Your saved work lives here. Choose a document to open, or start fresh.</p>
+        <div id="docList" class="docList"></div>
+
+        <div class="cardActions">
+          <button id="newDocBtn" class="secondaryBtn" type="button">Start a new document</button>
+        </div>
+
+        <div class="closeArea">
+          <button id="closeOpenOverlay" class="closeLink" type="button">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FINISH SESSION MODAL -->
+    <div id="finishOverlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="finishTitle">
+      <div class="card">
+        <h2 id="finishTitle">End session</h2>
+        <p>Export your work. Your words are safe.</p>
+
+        <div class="cardActions">
+          <button id="downloadRtfBtn" class="primaryBtn" type="button">Download rich text file</button>
+          <button id="emailExportBtn" class="secondaryBtn" type="button">Email export</button>
+        </div>
+
+        <div class="closeArea">
+          <button id="restartBtn" class="closeLink" type="button">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRIVACY MODAL -->
+    <div id="privacyOverlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="privacyTitle">
+      <div class="card">
+        <h2 id="privacyTitle">Privacy &amp; data usage</h2>
+        <p>
+          Boo Writer stores your documents locally in your browser (on this device) using local storage.
+          We don’t upload your writing anywhere from this page.
+        </p>
+        <p>
+          If you use “Email export”, your email app will open and you choose what to send.
+        </p>
+        <div class="closeArea">
+          <button id="closePrivacy" class="closeLink" type="button">Close</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // ---------------------------
+    // Boo Writer — single-file v1
+    // ---------------------------
+
+    const $ = (id) => document.getElementById(id);
+
+    const welcomeScreen = $("welcomeScreen");
+    const welcomeTitle  = $("welcomeTitle");
+    const beginBtn      = $("beginBtn");
+
+    const writerScreen  = $("writerScreen");
+    const editor        = $("editor");
+
+    const openBtn       = $("openBtn");
+    const saveBtn       = $("saveBtn");
+    const finishBtn     = $("finishBtn");
+
+    const themeSelect   = $("themeSelect");
+    const fontSelect    = $("fontSelect");
+    const fontSize      = $("fontSize");
+
+    const alignLeftBtn  = $("alignLeftBtn");
+    const alignJustifyBtn = $("alignJustifyBtn");
+    const indentBtn     = $("indentBtn");
+
+    const undoBtn       = $("undoBtn");
+    const redoBtn       = $("redoBtn");
+
+    const openOverlay   = $("openOverlay");
+    const closeOpenOverlay = $("closeOpenOverlay");
+    const docList       = $("docList");
+    const newDocBtn     = $("newDocBtn");
+
+    const finishOverlay = $("finishOverlay");
+    const downloadRtfBtn= $("downloadRtfBtn");
+    const emailExportBtn= $("emailExportBtn");
+    const restartBtn    = $("restartBtn");
+
+    const privacyLink   = $("privacyLink");
+    const privacyOverlay= $("privacyOverlay");
+    const closePrivacy  = $("closePrivacy");
+
+    // Populate font sizes 8–36
+    for (let s = 8; s <= 36; s += 1) {
+      const opt = document.createElement("option");
+      opt.value = String(s);
+      opt.textContent = String(s);
+      if (s === 18) opt.selected = true;
+      fontSize.appendChild(opt);
+    }
+
+    // State
+    const STORAGE_KEY = "boo_writer_docs_v1";
+    const SETTINGS_KEY = "boo_writer_settings_v1";
+    const SESSION_KEY = "boo_writer_current_doc_id_v1";
+
+    let currentDocId = null;     // string
+    let history = [];
+    let historyIndex = -1;
+    let applyingHistory = false;
+    let indentEnabled = false;
+    let alignment = "left";
+
+    // Utils
+    function nowIso() { return new Date().toISOString(); }
+
+    function loadDocs(){
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); }
+      catch { return {}; }
+    }
+    function saveDocs(docs){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(docs));
+    }
+
+    function loadSettings(){
+      try { return JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}"); }
+      catch { return {}; }
+    }
+    function saveSettings(s){
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+    }
+
+    function escapeTextForRtf(text){
+      return text
+        .replace(/\\/g, "\\\\")
+        .replace(/{/g, "\\{")
+        .replace(/}/g, "\\}")
+        .replace(/\r?\n/g, "\\par\n");
+    }
+
+    function getPlainText(){
+      // contenteditable uses <div>/<br>. textContent gives clean-ish plain text.
+      // Normalize multiple trailing newlines lightly.
+      return (editor.textContent || "").replace(/\u00A0/g, " ");
+    }
+
+    function setPlainText(text){
+      // Setting textContent keeps it plain.
+      editor.textContent = text || "";
+    }
+
+    function setTheme(theme){
+      document.body.setAttribute("data-theme", theme);
+      themeSelect.value = theme;
+      const settings = loadSettings();
+      settings.theme = theme;
+      saveSettings(settings);
+    }
+
+    function applyTypography(){
+      editor.style.fontFamily = fontSelect.value;
+      editor.style.fontSize = fontSize.value + "px";
+
+      editor.style.textAlign = alignment;
+      editor.style.textJustify = (alignment === "justify") ? "inter-word" : "auto";
+
+      editor.style.textIndent = indentEnabled ? "2em" : "0";
+      editor.style.paddingLeft = "22px";
+      editor.style.paddingRight = "22px";
+
+      alignLeftBtn.classList.toggle("toggled", alignment === "left");
+      alignJustifyBtn.classList.toggle("toggled", alignment === "justify");
+      indentBtn.classList.toggle("toggled", indentEnabled);
+
+      const settings = loadSettings();
+      settings.fontFamily = fontSelect.value;
+      settings.fontSize = Number(fontSize.value);
+      settings.alignment = alignment;
+      settings.indentEnabled = indentEnabled;
+      saveSettings(settings);
+    }
+
+    function showOverlay(el){
+      el.classList.add("active");
+      // focus management (minimal)
+      const focusable = el.querySelector("button, [href], select, input, textarea, [tabindex]:not([tabindex='-1'])");
+      if (focusable) focusable.focus();
+    }
+    function hideOverlay(el){
+      el.classList.remove("active");
+      editor.focus();
+    }
+
+    function fadeToWriter(){
+      // Fade out welcome screen, fade in writer
+      welcomeScreen.classList.remove("active");
+      writerScreen.classList.add("active");
+      // focus editor after transition
+      setTimeout(() => editor.focus(), 560);
+    }
+
+    function fadeToWelcome(){
+      writerScreen.classList.remove("active");
+      welcomeScreen.classList.add("active");
+      // reset welcome animation
+      welcomeTitle.classList.remove("show");
+      beginBtn.classList.remove("show");
+      setTimeout(() => {
+        welcomeTitle.classList.add("show");
+        setTimeout(() => beginBtn.classList.add("show"), 420);
+      }, 40);
+    }
+
+    // Documents
+    function newDocument(){
+      const id = "doc_" + Math.random().toString(36).slice(2) + "_" + Date.now();
+      const docs = loadDocs();
+      docs[id] = {
+        id,
+        name: "Untitled",
+        content: "",
+        createdAt: nowIso(),
+        updatedAt: nowIso(),
+      };
+      saveDocs(docs);
+      openDocument(id);
+    }
+
+    function openDocument(id){
+      const docs = loadDocs();
+      const doc = docs[id];
+      if (!doc) return;
+
+      currentDocId = id;
+      localStorage.setItem(SESSION_KEY, id);
+
+      setPlainText(doc.content || "");
+      resetHistory();
+      pushHistory(getPlainText()); // seed
+
+      hideOverlay(openOverlay);
+      editor.focus();
+    }
+
+    function renameIfUntitled(docs, id){
+      const doc = docs[id];
+      if (!doc) return;
+      if (doc.name && doc.name !== "Untitled") return;
+
+      // Gentle auto-name: first non-empty line (trimmed), else "Untitled"
+      const firstLine = (doc.content || "")
+        .split(/\r?\n/)
+        .map(l => l.trim())
+        .find(l => l.length > 0);
+
+      if (firstLine){
+        doc.name = firstLine.slice(0, 40);
+      }
+    }
+
+    function saveCurrent(){
+      const docs = loadDocs();
+      if (!currentDocId || !docs[currentDocId]) {
+        // If no doc yet, create one
+        newDocument();
+        return;
+      }
+      const doc = docs[currentDocId];
+      doc.content = getPlainText();
+      doc.updatedAt = nowIso();
+      renameIfUntitled(docs, currentDocId);
+      saveDocs(docs);
+      pulseButton(saveBtn);
+    }
+
+    function pulseButton(btn){
+      btn.style.transform = "scale(0.98)";
+      setTimeout(() => btn.style.transform = "scale(1)", 140);
+    }
+
+    function deleteDocument(id){
+      const docs = loadDocs();
+      if (!docs[id]) return;
+      delete docs[id];
+      saveDocs(docs);
+
+      if (currentDocId === id){
+        currentDocId = null;
+        localStorage.removeItem(SESSION_KEY);
+        setPlainText("");
+        resetHistory();
+        pushHistory("");
+      }
+      renderDocList();
+    }
+
+    function renderDocList(){
+      const docs = loadDocs();
+      const entries = Object.values(docs)
+        .sort((a,b) => (b.updatedAt || "").localeCompare(a.updatedAt || ""));
+
+      docList.innerHTML = "";
+
+      if (entries.length === 0){
+        const empty = document.createElement("p");
+        empty.style.margin = "6px 0 0";
+        empty.style.color = "var(--muted)";
+        empty.style.fontSize = "13px";
+        empty.textContent = "No saved documents yet.";
+        docList.appendChild(empty);
+        return;
+      }
+
+      for (const d of entries){
+        const row = document.createElement("div");
+        row.className = "docRow";
+
+        const meta = document.createElement("div");
+        meta.className = "docMeta";
+
+        const name = document.createElement("div");
+        name.className = "docName";
+        name.textContent = d.name || "Untitled";
+
+        const sub = document.createElement("div");
+        sub.className = "docSub";
+        const date = d.updatedAt ? new Date(d.updatedAt) : null;
+        sub.textContent = date ? ("Last saved: " + date.toLocaleString()) : "";
+
+        meta.appendChild(name);
+        meta.appendChild(sub);
+
+        const btns = document.createElement("div");
+        btns.className = "docBtns";
+
+        const open = document.createElement("button");
+        open.className = "toolBtn";
+        open.type = "button";
+        open.textContent = "Open";
+        open.onclick = () => openDocument(d.id);
+
+        const del = document.createElement("button");
+        del.className = "toolBtn";
+        del.type = "button";
+        del.textContent = "Delete";
+        del.onclick = () => {
+          const ok = confirm(`Delete "${d.name || "Untitled"}"? This cannot be undone.`);
+          if (ok) deleteDocument(d.id);
+        };
+
+        btns.appendChild(open);
+        btns.appendChild(del);
+
+        row.appendChild(meta);
+        row.appendChild(btns);
+        docList.appendChild(row);
+      }
+    }
+
+    // History (simple text snapshots)
+    function resetHistory(){
+      history = [];
+      historyIndex = -1;
+      updateHistoryButtons();
+    }
+    function pushHistory(text){
+      if (applyingHistory) return;
+
+      // If user typed after undo, drop redo branch
+      if (historyIndex < history.length - 1){
+        history = history.slice(0, historyIndex + 1);
+      }
+
+      // Avoid duplicating identical entries
+      if (history.length > 0 && history[history.length - 1] === text) return;
+
+      history.push(text);
+      historyIndex = history.length - 1;
+
+      // Cap history
+      const MAX = 80;
+      if (history.length > MAX){
+        const excess = history.length - MAX;
+        history = history.slice(excess);
+        historyIndex = history.length - 1;
+      }
+
+      updateHistoryButtons();
+    }
+
+    function updateHistoryButtons(){
+      undoBtn.disabled = historyIndex <= 0;
+      redoBtn.disabled = historyIndex >= history.length - 1;
+    }
+
+    function undo(){
+      if (historyIndex <= 0) return;
+      historyIndex -= 1;
+      applyingHistory = true;
+      setPlainText(history[historyIndex]);
+      applyingHistory = false;
+      updateHistoryButtons();
+    }
+    function redo(){
+      if (historyIndex >= history.length - 1) return;
+      historyIndex += 1;
+      applyingHistory = true;
+      setPlainText(history[historyIndex]);
+      applyingHistory = false;
+      updateHistoryButtons();
+    }
+
+    // Exports
+    function downloadRtf(){
+      const text = getPlainText();
+      const rtf =
+        "{\\rtf1\\ansi\\deff0\n" +
+        "{\\fonttbl{\\f0 " + (fontSelect.selectedOptions[0]?.textContent || "Serif") + ";}}\n" +
+        "\\f0\\fs" + (Number(fontSize.value) * 2) + "\n" +
+        escapeTextForRtf(text) +
+        "\n}";
+
+      const blob = new Blob([rtf], { type: "application/rtf" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      const stamp = new Date().toISOString().slice(0,10);
+      a.href = url;
+      a.download = `boo-writer-${stamp}.rtf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      URL.revokeObjectURL(url);
+    }
+
+    function emailExport(){
+      const text = getPlainText();
+      const subject = encodeURIComponent("Boo Writer export");
+      // mailto bodies can be size-limited; keep it simple
+      const body = encodeURIComponent(text.slice(0, 8000));
+      window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    }
+
+    // Welcome animation
+    function runWelcomeAnimation(){
+      setTimeout(() => welcomeTitle.classList.add("show"), 160);
+      setTimeout(() => beginBtn.classList.add("show"), 680);
+    }
+
+    // Load settings & restore last session doc if present
+    function init(){
+      runWelcomeAnimation();
+
+      const s = loadSettings();
+      if (s.theme) setTheme(s.theme);
+
+      if (s.fontFamily) fontSelect.value = s.fontFamily;
+      if (s.fontSize) fontSize.value = String(s.fontSize);
+      if (s.alignment) alignment = s.alignment;
+      if (typeof s.indentEnabled === "boolean") indentEnabled = s.indentEnabled;
+      applyTypography();
+
+      // Prepare history seed
+      resetHistory();
+      pushHistory("");
+
+      // Optionally restore last doc id (but we keep welcome first by design)
+      const last = localStorage.getItem(SESSION_KEY);
+      if (last) currentDocId = last;
+    }
+
+    // Events
+    beginBtn.addEventListener("click", () => {
+      // If we have a last doc, open it; otherwise create one
+      const docs = loadDocs();
+      if (!currentDocId || !docs[currentDocId]) {
+        // Create a new doc on first begin
+        newDocument();
+      } else {
+        openDocument(currentDocId);
+      }
+      fadeToWriter();
+    });
+
+    openBtn.addEventListener("click", () => {
+      renderDocList();
+      showOverlay(openOverlay);
+    });
+    closeOpenOverlay.addEventListener("click", () => hideOverlay(openOverlay));
+    newDocBtn.addEventListener("click", () => {
+      newDocument();
+      hideOverlay(openOverlay);
+    });
+
+    saveBtn.addEventListener("click", saveCurrent);
+
+    finishBtn.addEventListener("click", () => {
+      // Save quietly before finishing
+      saveCurrent();
+      showOverlay(finishOverlay);
+    });
+
+    downloadRtfBtn.addEventListener("click", downloadRtf);
+    emailExportBtn.addEventListener("click", emailExport);
+
+    restartBtn.addEventListener("click", () => {
+      hideOverlay(finishOverlay);
+      // Restart app: go back to welcome screen (keep docs saved)
+      fadeToWelcome();
+    });
+
+    privacyLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      showOverlay(privacyOverlay);
+    });
+    closePrivacy.addEventListener("click", () => hideOverlay(privacyOverlay));
+
+    themeSelect.addEventListener("change", () => setTheme(themeSelect.value));
+    fontSelect.addEventListener("change", applyTypography);
+    fontSize.addEventListener("change", applyTypography);
+
+    alignLeftBtn.addEventListener("click", () => { alignment = "left"; applyTypography(); });
+    alignJustifyBtn.addEventListener("click", () => { alignment = "justify"; applyTypography(); });
+    indentBtn.addEventListener("click", () => { indentEnabled = !indentEnabled; applyTypography(); });
+
+    undoBtn.addEventListener("click", undo);
+    redoBtn.addEventListener("click", redo);
+
+    // Track typing with gentle snapshotting
+    let snapshotTimer = null;
+    editor.addEventListener("input", () => {
+      if (applyingHistory) return;
+      // Debounce snapshots
+      clearTimeout(snapshotTimer);
+      snapshotTimer = setTimeout(() => {
+        pushHistory(getPlainText());
+      }, 350);
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener("keydown", (e) => {
+      const isMac = navigator.platform.toUpperCase().includes("MAC");
+      const mod = isMac ? e.metaKey : e.ctrlKey;
+
+      // Esc closes overlays
+      if (e.key === "Escape"){
+        if (openOverlay.classList.contains("active")) return hideOverlay(openOverlay);
+        if (finishOverlay.classList.contains("active")) return hideOverlay(finishOverlay);
+        if (privacyOverlay.classList.contains("active")) return hideOverlay(privacyOverlay);
+      }
+
+      if (!mod) return;
+
+      const k = e.key.toLowerCase();
+      if (k === "s"){
+        e.preventDefault();
+        saveCurrent();
+      }
+      if (k === "z"){
+        e.preventDefault();
+        if (e.shiftKey) redo();
+        else undo();
+      }
+      if (k === "y"){
+        e.preventDefault();
+        redo();
+      }
+      if (k === "o"){
+        e.preventDefault();
+        renderDocList();
+        showOverlay(openOverlay);
+      }
+    });
+
+    // Click outside card closes overlay (soft)
+    for (const ov of [openOverlay, finishOverlay, privacyOverlay]){
+      ov.addEventListener("click", (e) => {
+        if (e.target === ov) hideOverlay(ov);
+      });
+    }
+
+    init();
+  </script>
+</body>
+</html>
