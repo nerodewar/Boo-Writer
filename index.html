@@ -35,7 +35,7 @@
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji";
       background: var(--bg);
       color: var(--text);
-      overflow:hidden;
+      overflow:auto; /* ✅ FIX: allow scrolling (was overflow:hidden) */
     }
 
     .app{
@@ -109,6 +109,7 @@
       opacity:0;
       pointer-events:none;
       transition: opacity 520ms ease;
+      min-height: 100vh; /* ✅ FIX: keep layout stable */
     }
     .writer.active{
       opacity:1;
@@ -117,6 +118,10 @@
 
     /* Top bar spans the same width as the writing page */
     .topbar{
+      position: sticky;  /* ✅ FIX: toolbar stays visible */
+      top: 0;
+      z-index: 50;
+      background: var(--bg);
       display:flex;
       justify-content:center;
       padding: 14px 16px 10px;
@@ -184,6 +189,7 @@
     /* Writing area */
     .editorWrap{
       flex:1;
+      min-height: 0; /* ✅ FIX: critical for flex children to scroll properly */
       display:flex;
       align-items:stretch;
       justify-content:center;
@@ -199,7 +205,7 @@
       color: var(--editorText);
       box-shadow: var(--shadow);
       outline:none;
-      overflow:auto;
+      overflow:auto; /* editor scrolls internally */
       line-height: 1.7;
       font-size: 20px; /* base feels calmer */
       caret-color: var(--editorCaret);
@@ -384,7 +390,7 @@
     <section id="welcomeScreen" class="screen active" aria-label="Welcome">
       <div class="centerStack">
         <div id="welcomeTitle" class="welcomeTitle">Welcome to Boo Writer.</div>
-        <button id="beginBtn" class="beginBtn" type="button">Let’s begin</button>
+        <button id="beginBtn" class="beginBtn" type="button">Let’s begin…</button>
       </div>
     </section>
 
@@ -895,12 +901,8 @@
     function init(){
       runWelcomeAnimation();
 
-      // Paper is default because CSS is paper — no theme switching.
-
       const s = loadSettings();
       if (s.fontFamily) fontSelect.value = s.fontFamily;
-
-      // Restore "UI size" but default to calm 16
       if (s.fontSizeUI) fontSize.value = String(s.fontSizeUI);
 
       if (s.alignment) alignment = s.alignment;
