@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Boo Writer</title>
   <meta name="description" content="A calm, mindful space to write." />
+
   <style>
     :root{
       /* Paper theme only (default on landing) */
@@ -35,7 +36,7 @@
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji";
       background: var(--bg);
       color: var(--text);
-      overflow:auto; /* ✅ FIX: allow scrolling (was overflow:hidden) */
+      overflow:auto;
     }
 
     .app{
@@ -109,7 +110,7 @@
       opacity:0;
       pointer-events:none;
       transition: opacity 520ms ease;
-      min-height: 100vh; /* ✅ FIX: keep layout stable */
+      min-height: 100vh;
     }
     .writer.active{
       opacity:1;
@@ -118,20 +119,26 @@
 
     /* Top bar spans the same width as the writing page */
     .topbar{
-      position: sticky;  /* ✅ FIX: toolbar stays visible */
+      position: sticky;
       top: 0;
       z-index: 50;
       background: var(--bg);
       display:flex;
       justify-content:center;
-      padding: 14px 16px 0px;
+
+      /* ✅ KEY CHANGE: keep header tight under toolbar even with big icon */
+      padding: 10px 16px 2px;  /* smaller bottom padding */
     }
+
     .topbarInner{
       width:min(var(--editorMax), 100%);
       display:flex;
-      align-items:flex-start;
+
+      /* ✅ KEY CHANGE: align everything to the bottom so toolbar sits near editor */
+      align-items:flex-end;
+
       justify-content:space-between;
-      gap:4px;
+      gap:10px;
     }
 
     /* Toolbar wraps nicely on small screens */
@@ -144,34 +151,12 @@
       flex:1;
     }
 
-    /* ✅ NEW: App icon (top right) */
-    .appIconWrap{
-      flex-shrink:0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding-top: 6px; /* tiny optical align with pills */
-      margin-left: -8px;   /* try -6 to 0 */
-    }
-    .appIcon{
-      width:57px;
-      height:57px;
-      border-radius:8px;
-      object-fit:contain;
-      opacity:.9;
-      transition: opacity 180ms ease, transform 120ms ease;
-    }
-    .appIcon:hover{
-      opacity:1;
-      transform: scale(1.04);
-    }
-
     /* Each group can flex to fit */
     .toolGroup{
       display:flex;
       align-items:center;
       gap:8px;
-      padding: 4px 8px;
+      padding: 6px 8px;
       border:1px solid var(--line);
       border-radius: 999px;
       background: var(--panel);
@@ -208,14 +193,38 @@
     }
     select option{ color:#111; }
 
+    /* ✅ Big icon, but doesn't force a big “gap” */
+    .appIconWrap{
+      flex-shrink:0;
+      display:flex;
+      align-items:flex-end; /* ✅ bottom-align */
+      justify-content:center;
+      padding-bottom: 0;    /* keep tight */
+    }
+    .appIcon{
+      width:69px;           /* ✅ requested size */
+      height:69px;          /* ✅ requested size */
+      border-radius:14px;
+      object-fit:contain;
+      opacity:.95;
+      transition: opacity 180ms ease, transform 120ms ease;
+    }
+    .appIcon:hover{
+      opacity:1;
+      transform: scale(1.03);
+    }
+
     /* Writing area */
     .editorWrap{
       flex:1;
-      min-height: 0; /* ✅ FIX: critical for flex children to scroll properly */
+      min-height: 0;
       display:flex;
       align-items:stretch;
       justify-content:center;
-      padding: 0 4px 0;
+
+      /* ✅ KEY CHANGE: reduce gap below header */
+      padding: 0 16px 0;
+      margin-top: 4px; /* tiny breathing room; set to 0 if you want it tighter */
     }
     .editor{
       width:min(var(--editorMax), 100%);
@@ -227,7 +236,7 @@
       color: var(--editorText);
       box-shadow: var(--shadow);
       outline:none;
-      overflow:auto; /* editor scrolls internally */
+      overflow:auto;
       line-height: 1.7;
       font-size: 20px; /* base feels calmer */
       caret-color: var(--editorCaret);
@@ -391,22 +400,19 @@
       border:0!important;
     }
 
-    /* Phone friendliness: keep everything on top, wrap, and reduce padding slightly */
+    /* Phone friendliness */
     @media (max-width: 540px){
-      .topbar{ padding: 10px 10px 8px; }
-      .topbarInner{ gap:10px; }
+      .topbar{ padding: 8px 10px 2px; }
+      .topbarInner{ gap:8px; }
       .toolGroup{ padding: 6px; border-radius: 18px; }
       .toolBtn, select{ font-size: 12px; padding: 8px 10px; }
-      .editorWrap{ padding: 0 10px; }
+      .editorWrap{ padding: 0 10px; margin-top: 4px; }
       .editor{ padding: 20px 16px; border-radius: 16px; }
       .footer{ padding: 8px 10px 12px; }
       .footerInner{ flex-direction:column; align-items:flex-start; gap:6px; }
 
-      /* ✅ NEW: smaller icon on phones */
-      .appIcon{
-        width:28px;
-        height:28px;
-      }
+      /* keep icon big but not ridiculous on phones */
+      .appIcon{ width:56px; height:56px; border-radius:12px; }
     }
   </style>
 </head>
@@ -468,7 +474,7 @@
             </div>
           </div>
 
-          <!-- ✅ NEW: Boo Writer icon (top right) -->
+          <!-- Boo Writer icon (top right) -->
           <div class="appIconWrap">
             <img
               src="assets/icon/boo-writer.png"
@@ -597,8 +603,6 @@
     const closePrivacy  = $("closePrivacy");
 
     // --- Font size mapping ---
-    // The dropdown still shows 8–36 (as requested),
-    // but we map those to larger "actual pixels" so 12 feels comfortable.
     const SIZE_SCALE = 1.55; // 12 -> ~19px
     const MIN_SIZE = 8;
     const MAX_SIZE = 36;
@@ -607,7 +611,7 @@
     // Populate font sizes 8–36
     for (let s = MIN_SIZE; s <= MAX_SIZE; s += 1) {
       const opt = document.createElement("option");
-      opt.value = String(s);     // UI number
+      opt.value = String(s);
       opt.textContent = String(s);
       if (s === DEFAULT_UI_SIZE) opt.selected = true;
       fontSize.appendChild(opt);
@@ -662,7 +666,7 @@
     function uiToPx(uiSize){
       const n = Number(uiSize);
       const scaled = Math.round(n * SIZE_SCALE);
-      return Math.max(12, scaled); // guard: never too tiny
+      return Math.max(12, scaled);
     }
 
     function applyTypography(){
@@ -1066,4 +1070,3 @@
   </script>
 </body>
 </html>
-```
