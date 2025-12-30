@@ -1,3 +1,4 @@
+```html
 <!doctype html>
 <html lang="en">
 <head>
@@ -142,6 +143,27 @@
       gap:10px;
       min-width:0;
       flex:1;
+    }
+
+    /* ✅ NEW: App icon (top right) */
+    .appIconWrap{
+      flex-shrink:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding-top: 2px; /* tiny optical align with pills */
+    }
+    .appIcon{
+      width:32px;
+      height:32px;
+      border-radius:8px;
+      object-fit:contain;
+      opacity:.9;
+      transition: opacity 180ms ease, transform 120ms ease;
+    }
+    .appIcon:hover{
+      opacity:1;
+      transform: scale(1.04);
     }
 
     /* Each group can flex to fit */
@@ -379,10 +401,16 @@
       .editor{ padding: 20px 16px; border-radius: 16px; }
       .footer{ padding: 8px 10px 12px; }
       .footerInner{ flex-direction:column; align-items:flex-start; gap:6px; }
+
+      /* ✅ NEW: smaller icon on phones */
+      .appIcon{
+        width:28px;
+        height:28px;
+      }
     }
   </style>
 </head>
-  
+
 <script data-goatcounter="https://boo-writer.goatcounter.com/count"
   async src="//gc.zgo.at/count.js"></script>
 
@@ -401,6 +429,7 @@
     <main id="writerScreen" class="writer" aria-label="Writer">
       <header class="topbar">
         <div class="topbarInner">
+
           <div class="toolbar">
             <div class="toolGroup" aria-label="Document">
               <button class="toolBtn" id="openBtn" type="button">Open document</button>
@@ -438,6 +467,16 @@
               <button class="toolBtn" id="redoBtn" type="button" title="Redo">Redo</button>
             </div>
           </div>
+
+          <!-- ✅ NEW: Boo Writer icon (top right) -->
+          <div class="appIconWrap">
+            <img
+              src="assets/icon/boo-writer.png"
+              alt="Boo Writer"
+              class="appIcon"
+            />
+          </div>
+
         </div>
       </header>
 
@@ -1027,3 +1066,4 @@
   </script>
 </body>
 </html>
+```
