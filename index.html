@@ -1,3 +1,4 @@
+```html
 <!doctype html>
 <html lang="en">
 <head>
@@ -7,86 +8,7 @@
   <meta name="description" content="A calm, mindful space to write." />
   <style>
     :root{
-      --bg:#0b1630;         /* default: Navy */
-      --panel: rgba(255,255,255,.06);
-      --panel2: rgba(255,255,255,.08);
-      --text: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.72);
-      --muted2: rgba(255,255,255,.55);
-      --line: rgba(255,255,255,.14);
-      --btn: rgba(255,255,255,.10);
-      --btnHover: rgba(255,255,255,.14);
-      --shadow: 0 20px 60px rgba(0,0,0,.35);
-      --focus: rgba(255,255,255,.20);
-      --editorBg: transparent;
-      --editorText: var(--text);
-      --editorCaret: rgba(255,255,255,.85);
-      --link: rgba(255,255,255,.80);
-    }
-
-    /* Themes */
-    [data-theme="navy"]{
-      --bg:#0b1630;
-      --panel: rgba(255,255,255,.06);
-      --panel2: rgba(255,255,255,.08);
-      --text: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.72);
-      --muted2: rgba(255,255,255,.55);
-      --line: rgba(255,255,255,.14);
-      --btn: rgba(255,255,255,.10);
-      --btnHover: rgba(255,255,255,.14);
-      --shadow: 0 20px 60px rgba(0,0,0,.35);
-      --editorBg: transparent;
-      --editorText: rgba(255,255,255,.92);
-      --editorCaret: rgba(255,255,255,.85);
-      --link: rgba(255,255,255,.80);
-    }
-    [data-theme="midnight"]{
-      --bg:#070910;
-      --panel: rgba(255,255,255,.06);
-      --panel2: rgba(255,255,255,.08);
-      --text: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.70);
-      --muted2: rgba(255,255,255,.55);
-      --line: rgba(255,255,255,.14);
-      --btn: rgba(255,255,255,.10);
-      --btnHover: rgba(255,255,255,.14);
-      --shadow: 0 20px 60px rgba(0,0,0,.45);
-      --editorText: rgba(255,255,255,.92);
-      --editorCaret: rgba(255,255,255,.85);
-      --link: rgba(255,255,255,.80);
-    }
-    [data-theme="racing-green"]{
-      --bg:#0b1a14;
-      --panel: rgba(255,255,255,.06);
-      --panel2: rgba(255,255,255,.08);
-      --text: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.70);
-      --muted2: rgba(255,255,255,.55);
-      --line: rgba(255,255,255,.14);
-      --btn: rgba(255,255,255,.10);
-      --btnHover: rgba(255,255,255,.14);
-      --shadow: 0 20px 60px rgba(0,0,0,.40);
-      --editorText: rgba(255,255,255,.92);
-      --editorCaret: rgba(255,255,255,.85);
-      --link: rgba(255,255,255,.80);
-    }
-    [data-theme="rose-quartz"]{
-      --bg:#1b0f16;
-      --panel: rgba(255,255,255,.06);
-      --panel2: rgba(255,255,255,.08);
-      --text: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.70);
-      --muted2: rgba(255,255,255,.55);
-      --line: rgba(255,255,255,.14);
-      --btn: rgba(255,255,255,.10);
-      --btnHover: rgba(255,255,255,.14);
-      --shadow: 0 20px 60px rgba(0,0,0,.38);
-      --editorText: rgba(255,255,255,.92);
-      --editorCaret: rgba(255,255,255,.85);
-      --link: rgba(255,255,255,.80);
-    }
-    [data-theme="paper"]{
+      /* Paper theme only (default on landing) */
       --bg:#f3f0e7;
       --panel: rgba(0,0,0,.06);
       --panel2: rgba(0,0,0,.08);
@@ -101,6 +23,10 @@
       --editorText: rgba(18,18,18,.92);
       --editorCaret: rgba(18,18,18,.85);
       --link: rgba(18,18,18,.72);
+      --overlayBg: rgba(0,0,0,.15);
+
+      /* Layout width control */
+      --editorMax: 920px;
     }
 
     *{box-sizing:border-box}
@@ -113,7 +39,6 @@
       overflow:hidden;
     }
 
-    /* App container */
     .app{
       height:100%;
       width:100%;
@@ -191,19 +116,31 @@
       pointer-events:auto;
     }
 
+    /* Top bar spans the same width as the writing page */
     .topbar{
       display:flex;
-      align-items:center;
+      justify-content:center;
+      padding: 14px 16px 10px;
+    }
+    .topbarInner{
+      width:min(var(--editorMax), 100%);
+      display:flex;
+      align-items:flex-start;
       justify-content:space-between;
-      padding: 14px 16px;
       gap:12px;
     }
+
+    /* Toolbar wraps nicely on small screens */
     .toolbar{
       display:flex;
       align-items:center;
       flex-wrap:wrap;
       gap:10px;
+      min-width:0;
+      flex:1;
     }
+
+    /* Each group can flex to fit */
     .toolGroup{
       display:flex;
       align-items:center;
@@ -213,7 +150,10 @@
       border-radius: 999px;
       background: var(--panel);
       backdrop-filter: blur(10px);
+      flex-wrap:wrap;
+      max-width:100%;
     }
+
     .toolBtn{
       border:1px solid transparent;
       background: transparent;
@@ -229,7 +169,7 @@
     .toolBtn:disabled{ opacity:.45; cursor:not-allowed; }
     .toolBtn.toggled{ background: var(--btnHover); border-color: var(--line); }
 
-    select, input[type="number"]{
+    select{
       background: transparent;
       color: var(--text);
       border:1px solid var(--line);
@@ -237,38 +177,21 @@
       padding: 6px 10px;
       font-size: 12px;
       outline:none;
-    }
-    select{
       cursor:pointer;
+      max-width: 100%;
     }
-    select option{
-      color:#111;
-    }
-    input[type="number"]{
-      width: 78px;
-      text-align:center;
-    }
+    select option{ color:#111; }
 
-    .themeWrap{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      padding: 6px 8px;
-      border:1px solid var(--line);
-      border-radius: 999px;
-      background: var(--panel);
-      backdrop-filter: blur(10px);
-    }
-
+    /* Writing area */
     .editorWrap{
       flex:1;
       display:flex;
       align-items:stretch;
       justify-content:center;
-      padding: 6px 16px 0;
+      padding: 0 16px 0;
     }
     .editor{
-      width:min(920px, 100%);
+      width:min(var(--editorMax), 100%);
       height:100%;
       padding: 26px 22px;
       border-radius: 18px;
@@ -278,22 +201,28 @@
       box-shadow: var(--shadow);
       outline:none;
       overflow:auto;
-      line-height: 1.65;
-      font-size: 18px;
+      line-height: 1.7;
+      font-size: 20px; /* base feels calmer */
       caret-color: var(--editorCaret);
       font-family: ui-serif, Georgia, "Times New Roman", Times, serif;
       white-space: pre-wrap;
       word-break: break-word;
     }
 
-    /* Footer */
+    /* Footer spans same width as editor */
     .footer{
       display:flex;
-      align-items:center;
-      justify-content:space-between;
+      justify-content:center;
       padding: 10px 16px 14px;
       color: var(--muted2);
       font-size: 12px;
+      gap:12px;
+    }
+    .footerInner{
+      width:min(var(--editorMax), 100%);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
       gap:12px;
     }
     .footer a{
@@ -301,9 +230,7 @@
       text-decoration: none;
       border-bottom: 1px solid transparent;
     }
-    .footer a:hover{
-      border-bottom-color: var(--line);
-    }
+    .footer a:hover{ border-bottom-color: var(--line); }
 
     /* Modal overlay */
     .overlay{
@@ -313,13 +240,11 @@
       align-items:center;
       justify-content:center;
       padding:24px;
-      background: rgba(0,0,0,.35);
+      background: var(--overlayBg);
       opacity:0;
       pointer-events:none;
       transition: opacity 320ms ease;
     }
-    [data-theme="paper"] .overlay{ background: rgba(0,0,0,.15); }
-
     .overlay.active{
       opacity:1;
       pointer-events:auto;
@@ -385,7 +310,6 @@
       background: var(--btn);
     }
 
-    /* Open document list */
     .docList{
       display:flex;
       flex-direction:column;
@@ -402,9 +326,8 @@
       padding: 10px 10px;
       border:1px solid var(--line);
       border-radius: 14px;
-      background: rgba(255,255,255,.04);
+      background: rgba(0,0,0,.03);
     }
-    [data-theme="paper"] .docRow{ background: rgba(0,0,0,.03); }
     .docMeta{
       display:flex;
       flex-direction:column;
@@ -440,10 +363,22 @@
       white-space:nowrap!important;
       border:0!important;
     }
+
+    /* Phone friendliness: keep everything on top, wrap, and reduce padding slightly */
+    @media (max-width: 540px){
+      .topbar{ padding: 10px 10px 8px; }
+      .topbarInner{ gap:10px; }
+      .toolGroup{ padding: 6px; border-radius: 18px; }
+      .toolBtn, select{ font-size: 12px; padding: 8px 10px; }
+      .editorWrap{ padding: 0 10px; }
+      .editor{ padding: 20px 16px; border-radius: 16px; }
+      .footer{ padding: 8px 10px 12px; }
+      .footerInner{ flex-direction:column; align-items:flex-start; gap:6px; }
+    }
   </style>
 </head>
 
-<body data-theme="navy">
+<body>
   <div class="app">
 
     <!-- WELCOME SCREEN -->
@@ -457,55 +392,44 @@
     <!-- WRITER SCREEN -->
     <main id="writerScreen" class="writer" aria-label="Writer">
       <header class="topbar">
-        <div class="toolbar">
-          <div class="toolGroup" aria-label="Document">
-            <button class="toolBtn" id="openBtn" type="button">Open document</button>
-            <button class="toolBtn" id="saveBtn" type="button" title="Save to Boo Writer">Save work</button>
-            <button class="toolBtn" id="finishBtn" type="button">Finish session</button>
+        <div class="topbarInner">
+          <div class="toolbar">
+            <div class="toolGroup" aria-label="Document">
+              <button class="toolBtn" id="openBtn" type="button">Open document</button>
+              <button class="toolBtn" id="saveBtn" type="button" title="Save to Boo Writer">Save work</button>
+              <button class="toolBtn" id="finishBtn" type="button">Finish session</button>
+            </div>
+
+            <div class="toolGroup" aria-label="Typography">
+              <label class="sr-only" for="fontSelect">Font</label>
+              <select id="fontSelect" title="Font">
+                <option value='ui-serif, Georgia, "Times New Roman", Times, serif'>Serif</option>
+                <option value='ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif'>Sans</option>
+                <option value='"Iowan Old Style", "Palatino Linotype", Palatino, serif'>Palatino</option>
+                <option value='"Baskerville", "Baskerville Old Face", serif'>Baskerville</option>
+                <option value='"Garamond", "Adobe Garamond Pro", serif'>Garamond</option>
+                <option value='"Georgia", Georgia, serif'>Georgia</option>
+                <option value='"Times New Roman", Times, serif'>Times</option>
+                <option value='"Courier New", Courier, monospace'>Courier</option>
+                <option value='ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace'>Mono</option>
+                <option value='"Trebuchet MS", Trebuchet, sans-serif'>Trebuchet</option>
+                <option value='"Verdana", Verdana, sans-serif'>Verdana</option>
+                <option value='"Arial", Arial, sans-serif'>Arial</option>
+              </select>
+
+              <label class="sr-only" for="fontSize">Font size</label>
+              <select id="fontSize" title="Font size"></select>
+
+              <button class="toolBtn" id="alignLeftBtn" type="button" title="Left align">Left</button>
+              <button class="toolBtn" id="alignJustifyBtn" type="button" title="Justify">Justify</button>
+              <button class="toolBtn" id="indentBtn" type="button" title="Indent first line">Indent</button>
+            </div>
+
+            <div class="toolGroup" aria-label="History">
+              <button class="toolBtn" id="undoBtn" type="button" title="Undo">Undo</button>
+              <button class="toolBtn" id="redoBtn" type="button" title="Redo">Redo</button>
+            </div>
           </div>
-
-          <div class="toolGroup" aria-label="Typography">
-            <label class="sr-only" for="fontSelect">Font</label>
-            <select id="fontSelect" title="Font">
-              <option value='ui-serif, Georgia, "Times New Roman", Times, serif'>Serif</option>
-              <option value='ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif'>Sans</option>
-              <option value='"Iowan Old Style", "Palatino Linotype", Palatino, serif'>Palatino</option>
-              <option value='"Baskerville", "Baskerville Old Face", serif'>Baskerville</option>
-              <option value='"Garamond", "Adobe Garamond Pro", serif'>Garamond</option>
-              <option value='"Georgia", Georgia, serif'>Georgia</option>
-              <option value='"Times New Roman", Times, serif'>Times</option>
-              <option value='"Courier New", Courier, monospace'>Courier</option>
-              <option value='ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace'>Mono</option>
-              <option value='"Trebuchet MS", Trebuchet, sans-serif'>Trebuchet</option>
-              <option value='"Verdana", Verdana, sans-serif'>Verdana</option>
-              <option value='"Arial", Arial, sans-serif'>Arial</option>
-            </select>
-
-            <label class="sr-only" for="fontSize">Font size</label>
-            <select id="fontSize" title="Font size">
-              <!-- 8–36 -->
-            </select>
-
-            <button class="toolBtn" id="alignLeftBtn" type="button" title="Left align">Left</button>
-            <button class="toolBtn" id="alignJustifyBtn" type="button" title="Justify">Justify</button>
-            <button class="toolBtn" id="indentBtn" type="button" title="Indent first line">Indent</button>
-          </div>
-
-          <div class="toolGroup" aria-label="History">
-            <button class="toolBtn" id="undoBtn" type="button" title="Undo">Undo</button>
-            <button class="toolBtn" id="redoBtn" type="button" title="Redo">Redo</button>
-          </div>
-        </div>
-
-        <div class="themeWrap" aria-label="Theme">
-          <label class="sr-only" for="themeSelect">Theme</label>
-          <select id="themeSelect" title="Theme">
-            <option value="navy">Navy</option>
-            <option value="midnight">Midnight</option>
-            <option value="racing-green">Racing Green</option>
-            <option value="rose-quartz">Rose Quartz</option>
-            <option value="paper">Paper</option>
-          </select>
         </div>
       </header>
 
@@ -521,8 +445,10 @@
       </section>
 
       <footer class="footer">
-        <div>© 2025 James Ritchie &amp; Boo Industries…</div>
-        <div><a href="#" id="privacyLink">Privacy &amp; data usage statement</a></div>
+        <div class="footerInner">
+          <div>© 2025 James Ritchie &amp; Boo Industries…</div>
+          <div><a href="#" id="privacyLink">Privacy &amp; data usage statement</a></div>
+        </div>
       </footer>
     </main>
 
@@ -582,6 +508,8 @@
   <script>
     // ---------------------------
     // Boo Writer — single-file v1
+    // Paper theme default, responsive top controls, toolbar aligns to editor width.
+    // Also: make "12" feel larger by scaling the UI size list.
     // ---------------------------
 
     const $ = (id) => document.getElementById(id);
@@ -597,7 +525,6 @@
     const saveBtn       = $("saveBtn");
     const finishBtn     = $("finishBtn");
 
-    const themeSelect   = $("themeSelect");
     const fontSelect    = $("fontSelect");
     const fontSize      = $("fontSize");
 
@@ -622,12 +549,20 @@
     const privacyOverlay= $("privacyOverlay");
     const closePrivacy  = $("closePrivacy");
 
+    // --- Font size mapping ---
+    // The dropdown still shows 8–36 (as requested),
+    // but we map those to larger "actual pixels" so 12 feels comfortable.
+    const SIZE_SCALE = 1.55; // 12 -> ~19px
+    const MIN_SIZE = 8;
+    const MAX_SIZE = 36;
+    const DEFAULT_UI_SIZE = 16; // default looks calm (16 -> ~25px)
+
     // Populate font sizes 8–36
-    for (let s = 8; s <= 36; s += 1) {
+    for (let s = MIN_SIZE; s <= MAX_SIZE; s += 1) {
       const opt = document.createElement("option");
-      opt.value = String(s);
+      opt.value = String(s);     // UI number
       opt.textContent = String(s);
-      if (s === 18) opt.selected = true;
+      if (s === DEFAULT_UI_SIZE) opt.selected = true;
       fontSize.appendChild(opt);
     }
 
@@ -636,14 +571,13 @@
     const SETTINGS_KEY = "boo_writer_settings_v1";
     const SESSION_KEY = "boo_writer_current_doc_id_v1";
 
-    let currentDocId = null;     // string
+    let currentDocId = null;
     let history = [];
     let historyIndex = -1;
     let applyingHistory = false;
     let indentEnabled = false;
     let alignment = "left";
 
-    // Utils
     function nowIso() { return new Date().toISOString(); }
 
     function loadDocs(){
@@ -671,34 +605,28 @@
     }
 
     function getPlainText(){
-      // contenteditable uses <div>/<br>. textContent gives clean-ish plain text.
-      // Normalize multiple trailing newlines lightly.
       return (editor.textContent || "").replace(/\u00A0/g, " ");
     }
 
     function setPlainText(text){
-      // Setting textContent keeps it plain.
       editor.textContent = text || "";
     }
 
-    function setTheme(theme){
-      document.body.setAttribute("data-theme", theme);
-      themeSelect.value = theme;
-      const settings = loadSettings();
-      settings.theme = theme;
-      saveSettings(settings);
+    function uiToPx(uiSize){
+      const n = Number(uiSize);
+      const scaled = Math.round(n * SIZE_SCALE);
+      return Math.max(12, scaled); // guard: never too tiny
     }
 
     function applyTypography(){
       editor.style.fontFamily = fontSelect.value;
-      editor.style.fontSize = fontSize.value + "px";
+
+      const px = uiToPx(fontSize.value);
+      editor.style.fontSize = px + "px";
 
       editor.style.textAlign = alignment;
       editor.style.textJustify = (alignment === "justify") ? "inter-word" : "auto";
-
       editor.style.textIndent = indentEnabled ? "2em" : "0";
-      editor.style.paddingLeft = "22px";
-      editor.style.paddingRight = "22px";
 
       alignLeftBtn.classList.toggle("toggled", alignment === "left");
       alignJustifyBtn.classList.toggle("toggled", alignment === "justify");
@@ -706,7 +634,7 @@
 
       const settings = loadSettings();
       settings.fontFamily = fontSelect.value;
-      settings.fontSize = Number(fontSize.value);
+      settings.fontSizeUI = Number(fontSize.value);
       settings.alignment = alignment;
       settings.indentEnabled = indentEnabled;
       saveSettings(settings);
@@ -714,7 +642,6 @@
 
     function showOverlay(el){
       el.classList.add("active");
-      // focus management (minimal)
       const focusable = el.querySelector("button, [href], select, input, textarea, [tabindex]:not([tabindex='-1'])");
       if (focusable) focusable.focus();
     }
@@ -724,17 +651,14 @@
     }
 
     function fadeToWriter(){
-      // Fade out welcome screen, fade in writer
       welcomeScreen.classList.remove("active");
       writerScreen.classList.add("active");
-      // focus editor after transition
       setTimeout(() => editor.focus(), 560);
     }
 
     function fadeToWelcome(){
       writerScreen.classList.remove("active");
       welcomeScreen.classList.add("active");
-      // reset welcome animation
       welcomeTitle.classList.remove("show");
       beginBtn.classList.remove("show");
       setTimeout(() => {
@@ -743,7 +667,6 @@
       }, 40);
     }
 
-    // Documents
     function newDocument(){
       const id = "doc_" + Math.random().toString(36).slice(2) + "_" + Date.now();
       const docs = loadDocs();
@@ -768,7 +691,7 @@
 
       setPlainText(doc.content || "");
       resetHistory();
-      pushHistory(getPlainText()); // seed
+      pushHistory(getPlainText());
 
       hideOverlay(openOverlay);
       editor.focus();
@@ -779,7 +702,6 @@
       if (!doc) return;
       if (doc.name && doc.name !== "Untitled") return;
 
-      // Gentle auto-name: first non-empty line (trimmed), else "Untitled"
       const firstLine = (doc.content || "")
         .split(/\r?\n/)
         .map(l => l.trim())
@@ -793,7 +715,6 @@
     function saveCurrent(){
       const docs = loadDocs();
       if (!currentDocId || !docs[currentDocId]) {
-        // If no doc yet, create one
         newDocument();
         return;
       }
@@ -898,25 +819,20 @@
     function pushHistory(text){
       if (applyingHistory) return;
 
-      // If user typed after undo, drop redo branch
       if (historyIndex < history.length - 1){
         history = history.slice(0, historyIndex + 1);
       }
-
-      // Avoid duplicating identical entries
       if (history.length > 0 && history[history.length - 1] === text) return;
 
       history.push(text);
       historyIndex = history.length - 1;
 
-      // Cap history
       const MAX = 80;
       if (history.length > MAX){
         const excess = history.length - MAX;
         history = history.slice(excess);
         historyIndex = history.length - 1;
       }
-
       updateHistoryButtons();
     }
 
@@ -942,13 +858,12 @@
       updateHistoryButtons();
     }
 
-    // Exports
     function downloadRtf(){
       const text = getPlainText();
       const rtf =
         "{\\rtf1\\ansi\\deff0\n" +
         "{\\fonttbl{\\f0 " + (fontSelect.selectedOptions[0]?.textContent || "Serif") + ";}}\n" +
-        "\\f0\\fs" + (Number(fontSize.value) * 2) + "\n" +
+        "\\f0\\fs" + (uiToPx(fontSize.value) * 2) + "\n" +
         escapeTextForRtf(text) +
         "\n}";
 
@@ -969,45 +884,42 @@
     function emailExport(){
       const text = getPlainText();
       const subject = encodeURIComponent("Boo Writer export");
-      // mailto bodies can be size-limited; keep it simple
       const body = encodeURIComponent(text.slice(0, 8000));
       window.location.href = `mailto:?subject=${subject}&body=${body}`;
     }
 
-    // Welcome animation
     function runWelcomeAnimation(){
       setTimeout(() => welcomeTitle.classList.add("show"), 160);
       setTimeout(() => beginBtn.classList.add("show"), 680);
     }
 
-    // Load settings & restore last session doc if present
     function init(){
       runWelcomeAnimation();
 
-      const s = loadSettings();
-      if (s.theme) setTheme(s.theme);
+      // Paper is default because CSS is paper — no theme switching.
 
+      const s = loadSettings();
       if (s.fontFamily) fontSelect.value = s.fontFamily;
-      if (s.fontSize) fontSize.value = String(s.fontSize);
+
+      // Restore "UI size" but default to calm 16
+      if (s.fontSizeUI) fontSize.value = String(s.fontSizeUI);
+
       if (s.alignment) alignment = s.alignment;
       if (typeof s.indentEnabled === "boolean") indentEnabled = s.indentEnabled;
+
       applyTypography();
 
-      // Prepare history seed
       resetHistory();
       pushHistory("");
 
-      // Optionally restore last doc id (but we keep welcome first by design)
       const last = localStorage.getItem(SESSION_KEY);
       if (last) currentDocId = last;
     }
 
     // Events
     beginBtn.addEventListener("click", () => {
-      // If we have a last doc, open it; otherwise create one
       const docs = loadDocs();
       if (!currentDocId || !docs[currentDocId]) {
-        // Create a new doc on first begin
         newDocument();
       } else {
         openDocument(currentDocId);
@@ -1028,7 +940,6 @@
     saveBtn.addEventListener("click", saveCurrent);
 
     finishBtn.addEventListener("click", () => {
-      // Save quietly before finishing
       saveCurrent();
       showOverlay(finishOverlay);
     });
@@ -1038,7 +949,6 @@
 
     restartBtn.addEventListener("click", () => {
       hideOverlay(finishOverlay);
-      // Restart app: go back to welcome screen (keep docs saved)
       fadeToWelcome();
     });
 
@@ -1048,7 +958,6 @@
     });
     closePrivacy.addEventListener("click", () => hideOverlay(privacyOverlay));
 
-    themeSelect.addEventListener("change", () => setTheme(themeSelect.value));
     fontSelect.addEventListener("change", applyTypography);
     fontSize.addEventListener("change", applyTypography);
 
@@ -1063,19 +972,17 @@
     let snapshotTimer = null;
     editor.addEventListener("input", () => {
       if (applyingHistory) return;
-      // Debounce snapshots
       clearTimeout(snapshotTimer);
       snapshotTimer = setTimeout(() => {
         pushHistory(getPlainText());
       }, 350);
     });
 
-    // Keyboard shortcuts
+    // Shortcuts
     document.addEventListener("keydown", (e) => {
       const isMac = navigator.platform.toUpperCase().includes("MAC");
       const mod = isMac ? e.metaKey : e.ctrlKey;
 
-      // Esc closes overlays
       if (e.key === "Escape"){
         if (openOverlay.classList.contains("active")) return hideOverlay(openOverlay);
         if (finishOverlay.classList.contains("active")) return hideOverlay(finishOverlay);
@@ -1083,8 +990,8 @@
       }
 
       if (!mod) return;
-
       const k = e.key.toLowerCase();
+
       if (k === "s"){
         e.preventDefault();
         saveCurrent();
@@ -1105,7 +1012,7 @@
       }
     });
 
-    // Click outside card closes overlay (soft)
+    // Click outside card closes overlay
     for (const ov of [openOverlay, finishOverlay, privacyOverlay]){
       ov.addEventListener("click", (e) => {
         if (e.target === ov) hideOverlay(ov);
