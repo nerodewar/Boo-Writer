@@ -53,7 +53,7 @@
     "stay_1": {
       "lines": [
         "Hey {{name}}…\n\nWhat's on your mind?",
-        "I’m here, {{name}}.\n\nTake your time."
+        "I’m here, {{name}}.\n\nWhat's on your mind?"
       ],
       "choices": [
         { "label": "Write a new memory...", "goto": "ask_mind_1" },
