@@ -74,7 +74,7 @@
 
     "capture_note_1": {
       "lines": [
-        "Okay, {{name}}.\n\nType a sentence or two — I’ll use my ghostly instinct to remember it aftward..."
+        "Okay, {{name}}.\n\nType a sentence or two — I’ll use my ghostly instinct to remember it afterward..."
       ],
       "input": {
         "placeholder": "A sentence or two…",
@@ -105,11 +105,7 @@
         "{{recallLine}}"
       ],
       "choices": [
-        {
-          "label": "Say less…",
-          "goto": "mute_1",
-          "effects": [{ "type": "set", "key": "booMuted", "value": true }]
-        },
+        { "label": "Write a new memory.", "goto": "ask_mind_1" },
         { "label": "Back to writing.", "goto": "end" }
       ]
     },
