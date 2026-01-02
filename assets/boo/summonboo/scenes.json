@@ -64,7 +64,6 @@
       ],
       "choices": [
         { "label": "I’ll type it.", "goto": "capture_note_1" },
-        { "label": "Not sure.", "goto": "end_soft_1" },
         { "label": "Back to writing.", "goto": "end" }
       ]
     },
@@ -91,7 +90,6 @@
         "{{recallLine}}"
       ],
       "choices": [
-        { "label": "Thank you, Boo…", "goto": "thanks_1" },
         { "label": "Say less…", "goto": "mute_1", "effects": [{ "type": "set", "key": "booMuted", "value": true }] },
         { "label": "Back to writing.", "goto": "end" }
       ]
