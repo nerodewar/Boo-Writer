@@ -1,18 +1,25 @@
 {
   "meta": {
     "version": "1.0",
-    "allowSummonWhenMuted": true
+    "allowSummonWhenMuted": true,
+    "firstScene": "intro_1",
+    "summonScene": "stay_1"
   },
   "scenes": {
     "intro_1": {
       "lines": [
-        "Hi… I’m Boo. I live in Boo Writer 👻",
+        "Hi… I’m Boo. I live in Boo Writer 👻"
       ],
       "choices": [
         { "label": "Who are you?", "goto": "who_1" },
-        { "label": "Say less…", "goto": "mute_1", "effects": [{ "type": "set", "key": "booMuted", "value": true }] }
+        {
+          "label": "Say less…",
+          "goto": "mute_1",
+          "effects": [{ "type": "set", "key": "booMuted", "value": true }]
+        }
       ]
     },
+
     "who_1": {
       "lines": [
         "I’m Boo — a little ghost in the machine 👻 I drift around the great beyond and keep you company.",
@@ -24,6 +31,7 @@
         { "label": "Back to writing.", "goto": "end" }
       ]
     },
+
     "ghost_1": {
       "lines": [
         "That’s right. A friendly one.\n\nI won’t get in the way 🙂"
@@ -33,12 +41,7 @@
         { "label": "Stay with me.", "goto": "stay_1" }
       ]
     },
-      ],
-      "choices": [
-        { "label": "Stay with me.", "goto": "stay_1" },
-        { "label": "Back to writing.", "goto": "end" }
-      ]
-    },
+
     "mute_1": {
       "lines": [
         "Okay, {{name}}.\n\nI’ll go quiet. Tap the Boo icon if you want me back."
@@ -47,6 +50,7 @@
         { "label": "Okay.", "goto": "end" }
       ]
     },
+
     "stay_1": {
       "lines": [
         "Hey {{name}}…\n\nYou don’t have to write a lot. Just one honest line.",
@@ -58,6 +62,7 @@
         { "label": "Back to writing.", "goto": "end" }
       ]
     },
+
     "ask_mind_1": {
       "lines": [
         "What’s on your mind right now, {{name}}?"
@@ -67,16 +72,26 @@
         { "label": "Back to writing.", "goto": "end" }
       ]
     },
+
     "capture_note_1": {
       "lines": [
         "Okay, {{name}}.\n\nType a sentence or two — I’ll remember the shape of it."
       ],
-      "input": { "placeholder": "A sentence or two…", "storeAs": "note", "hint": "This stays on this device." },
+      "input": {
+        "placeholder": "A sentence or two…",
+        "storeAs": "note",
+        "hint": "This stays on this device."
+      },
       "choices": [
-        { "label": "Save", "goto": "saved_note_1", "effects": [{ "type": "appendNote", "tag": "mind" }] },
+        {
+          "label": "Save",
+          "goto": "saved_note_1",
+          "effects": [{ "type": "appendNote", "tag": "mind" }]
+        },
         { "label": "Never mind", "goto": "end" }
       ]
     },
+
     "saved_note_1": {
       "lines": [
         "Thank you, {{name}}.\n\nI’ll hold that gently."
@@ -85,15 +100,21 @@
         { "label": "Back to writing.", "goto": "end" }
       ]
     },
+
     "recall_1": {
       "lines": [
         "{{recallLine}}"
       ],
       "choices": [
-        { "label": "Say less…", "goto": "mute_1", "effects": [{ "type": "set", "key": "booMuted", "value": true }] },
+        {
+          "label": "Say less…",
+          "goto": "mute_1",
+          "effects": [{ "type": "set", "key": "booMuted", "value": true }]
+        },
         { "label": "Back to writing.", "goto": "end" }
       ]
     },
+
     "end_soft_1": {
       "lines": [
         "That’s okay, {{name}}.\n\nYou don’t have to name it to let it move."
@@ -102,6 +123,7 @@
         { "label": "Back to writing.", "goto": "end" }
       ]
     },
+
     "end": { "lines": [""] }
   }
 }
