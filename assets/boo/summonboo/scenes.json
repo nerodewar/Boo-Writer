@@ -23,7 +23,7 @@
     "who_1": {
       "lines": [
         "I’m Boo — a little ghost in the machine 👻 I drift around the great beyond and keep you company.",
-        "I’m Boo — a little ghost in the machine 👻 I’m here for the quiet parts — the parts that just need someone nearby."
+        "I’m Boo — a little ghost in the machine 👻 I’m here for the quiet parts; the parts that just need someone nearby."
       ],
       "choices": [
         { "label": "A ghost?!", "goto": "ghost_1" },
@@ -53,11 +53,11 @@
 
     "stay_1": {
       "lines": [
-        "Hey {{name}}…\n\nYou don’t have to write a lot. Just one honest line.",
+        "Hey {{name}}…\n\nWhat's on your mind?",
         "I’m here, {{name}}.\n\nTake your time."
       ],
       "choices": [
-        { "label": "What’s on your mind?", "goto": "ask_mind_1" },
+        { "label": "Write a new memory...", "goto": "ask_mind_1" },
         { "label": "Earlier… what was I thinking about?", "goto": "recall_1" },
         { "label": "Back to writing.", "goto": "end" }
       ]
@@ -75,7 +75,7 @@
 
     "capture_note_1": {
       "lines": [
-        "Okay, {{name}}.\n\nType a sentence or two — I’ll remember the shape of it."
+        "Okay, {{name}}.\n\nType a sentence or two — I’ll use my ghostly instinct to remember it aftward..."
       ],
       "input": {
         "placeholder": "A sentence or two…",
