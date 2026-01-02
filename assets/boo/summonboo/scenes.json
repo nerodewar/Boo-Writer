@@ -7,18 +7,16 @@
     "intro_1": {
       "lines": [
         "Hi… I’m Boo. I live in Boo Writer 👻",
-        "Hello. I’m Boo — a little ghost in the machine 👻"
       ],
       "choices": [
         { "label": "Who are you?", "goto": "who_1" },
-        { "label": "Thank you, Boo…", "goto": "thanks_1" },
         { "label": "Say less…", "goto": "mute_1", "effects": [{ "type": "set", "key": "booMuted", "value": true }] }
       ]
     },
     "who_1": {
       "lines": [
-        "I drift around your words and keep you company.",
-        "I’m here for the quiet parts — the parts that just need someone nearby."
+        "I’m Boo — a little ghost in the machine 👻 I drift around the great beyond and keep you company.",
+        "I’m Boo — a little ghost in the machine 👻 I’m here for the quiet parts — the parts that just need someone nearby."
       ],
       "choices": [
         { "label": "A ghost?!", "goto": "ghost_1" },
@@ -35,10 +33,6 @@
         { "label": "Stay with me.", "goto": "stay_1" }
       ]
     },
-    "thanks_1": {
-      "lines": [
-        "You’re welcome, {{name}}.",
-        "Anytime, {{name}}."
       ],
       "choices": [
         { "label": "Stay with me.", "goto": "stay_1" },
