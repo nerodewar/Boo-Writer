@@ -23,7 +23,6 @@
     "who_1": {
       "lines": [
         "I’m Boo — a little ghost in the machine 👻 I drift around the great beyond and keep you company.",
-        "I’m Boo — a little ghost in the machine 👻 I’m here for the quiet parts; the parts that just need someone nearby."
       ],
       "choices": [
         { "label": "A ghost?!", "goto": "ghost_1" },
