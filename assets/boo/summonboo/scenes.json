@@ -22,11 +22,11 @@
 
     "who_1": {
       "lines": [
-        "I’m Boo — a little ghost in the machine 👻 I drift around the great beyond and keep you company.",
+        "I’m Boo — a little ghost in the machine 👻 I drift around the great beyond and keep you company."
       ],
       "choices": [
         { "label": "A ghost?!", "goto": "ghost_1" },
-        { "label": "Stay close to me.", "goto": "stay_1" },
+        { "label": "Okay. Stay close.", "goto": "stay_1" },
         { "label": "Back to writing.", "goto": "end" }
       ]
     },
