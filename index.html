@@ -1357,8 +1357,8 @@
 
       // recall line (verbatim note, no interpretation)
       const recallLine = note
-        ? `Hey ${safeName}… earlier you were thinking about:\n“${note}”\n\nWHat's on your mind right now?`
-        : `Hey ${safeName}… I don’t have anything saved yet.\n\nIf you want, tell me what’s on your mind.`;
+        ? `${safeName}… earlier you were thinking about:\n“${note}”\n\nWHat's on your mind right now?`
+        : `${safeName}… I don’t have anything saved yet.\n\nIf you want, tell me what’s on your mind.`;
 
       let rawLine = pickNonRepeatingLine(sceneId, scene.lines || [""], state);
 
