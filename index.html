@@ -69,6 +69,7 @@
       align-items:center;
       gap:18px;
       text-align:center;
+      width: min(520px, 100%);
     }
     .welcomeTitle{
       font-size: clamp(22px, 4vw, 34px);
@@ -101,6 +102,56 @@
       transform: translateY(0px);
     }
 
+    /* Name screen */
+    .nameQuestion{
+      font-size: clamp(20px, 3.6vw, 30px);
+      letter-spacing:.2px;
+      font-weight: 520;
+      color: var(--text);
+      opacity:0;
+      transform: translateY(4px);
+      transition: opacity 700ms ease, transform 700ms ease;
+    }
+    .nameQuestion.show{
+      opacity:1;
+      transform: translateY(0px);
+    }
+    .nameInput{
+      width: min(420px, 92vw);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 12px 14px;
+      background: rgba(255,255,255,.65);
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+      opacity:0;
+      transform: translateY(6px);
+      transition: opacity 700ms ease, transform 700ms ease, background 180ms ease, border-color 180ms ease;
+      text-align:center;
+    }
+    .nameInput:focus{
+      background: rgba(255,255,255,.78);
+      border-color: rgba(0,0,0,.20);
+    }
+    .nameInput.show{
+      opacity:1;
+      transform: translateY(0px);
+    }
+    .nameHint{
+      margin-top: -6px;
+      font-size: 12px;
+      color: var(--muted2);
+      line-height: 1.35;
+      opacity:0;
+      transform: translateY(6px);
+      transition: opacity 700ms ease, transform 700ms ease;
+    }
+    .nameHint.show{
+      opacity:1;
+      transform: translateY(0px);
+    }
+
     /* Writer screen */
     .writer{
       position:absolute;
@@ -127,23 +178,17 @@
       background: var(--bg);
       display:flex;
       justify-content:center;
-
-      /* ✅ KEY CHANGE: keep header tight under toolbar even with big icon */
-      padding: 8px 16px 2px;  /* smaller bottom padding */
+      padding: 8px 16px 2px;
     }
 
     .topbarInner{
       width:min(var(--editorMax), 100%);
       display:flex;
-
-      /* ✅ KEY CHANGE: align everything to the bottom so toolbar sits near editor */
       align-items:flex-end;
-
       justify-content:space-between;
       gap:10px;
     }
 
-    /* Toolbar wraps nicely on small screens */
     .toolbar{
       display:flex;
       align-items:center;
@@ -153,7 +198,6 @@
       flex:1;
     }
 
-    /* Each group can flex to fit */
     .toolGroup{
       display:flex;
       align-items:center;
@@ -195,16 +239,15 @@
     }
     select option{ color:#111; }
 
-    /* ✅ Big icon, but doesn't force a big “gap” */
     .appIconWrap{
       flex-shrink:0;
       display:flex;
-      align-items:flex-end; /* ✅ bottom-align */
+      align-items:flex-end;
       justify-content:center;
-      padding-bottom: 0;    /* keep tight */
+      padding-bottom: 0;
+      position: relative;
     }
 
-    /* ✅ Make the icon clickable (button) without changing layout */
     .appIconBtn{
       border: none;
       background: transparent;
@@ -221,8 +264,8 @@
     }
 
     .appIcon{
-      width:90px;           /* ✅ requested size */
-      height:90px;          /* ✅ requested size */
+      width:90px;
+      height:90px;
       border-radius:0px;
       object-fit:contain;
       opacity:.95;
@@ -241,10 +284,8 @@
       display:flex;
       align-items:stretch;
       justify-content:center;
-
-      /* ✅ KEY CHANGE: reduce gap below header */
       padding: 0 16px 0;
-      margin-top: 4px; /* tiny breathing room; set to 0 if you want it tighter */
+      margin-top: 4px;
     }
     .editor{
       width:min(var(--editorMax), 100%);
@@ -258,7 +299,7 @@
       outline:none;
       overflow:auto;
       line-height: 1.7;
-      font-size: 20px; /* base feels calmer */
+      font-size: 20px;
       caret-color: var(--editorCaret);
       font-family: ui-serif, Georgia, "Times New Roman", Times, serif;
       white-space: pre-wrap;
@@ -422,74 +463,103 @@
     }
 
     /***********************
-     * ✅ NEW: Page gets possessed (Boo icon click)
-     * - triggers ONLY when clicking the Boo Writer icon (top right)
-     * - short + skippable (typing cancels)
-     * - overlay is pointer-events:none so it never blocks UI
+     * ✅ Boo companion UI
      ***********************/
-    .possess-layer{
+    .booPanel{
       position: fixed;
-      inset: 0;
+      right: 16px;
+      bottom: 16px;
+      width: min(360px, calc(100vw - 32px));
+      z-index: 65; /* below overlays (70), above editor */
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255,255,255,.72);
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+      padding: 12px;
+      opacity: 0;
+      transform: translateY(10px);
       pointer-events: none;
-      z-index: 60; /* below modals (70), above page (50) */
-      opacity: 0;
-      transition: opacity 120ms ease;
+      transition: opacity 220ms ease, transform 220ms ease;
     }
-    body.has-possessed .possess-layer{ opacity: 1; }
-
-    .possess-layer::before{
-      content:"";
-      position:absolute;
-      inset:-20%;
-      background:
-        radial-gradient(900px 650px at 18% 6%, rgba(0,0,0,.12), transparent 55%),
-        radial-gradient(900px 650px at 84% 10%, rgba(0,0,0,.08), transparent 55%),
-        radial-gradient(700px 520px at 55% 92%, rgba(0,0,0,.07), transparent 58%);
-      filter: blur(10px);
-      opacity: .55;
+    .booPanel.active{
+      opacity: 1;
+      transform: translateY(0px);
+      pointer-events: auto;
     }
-
-    .possess-streak{
-      position:absolute;
-      left: -40%;
-      top: 20%;
-      width: 34%;
-      height: 3px;
+    .booHeader{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom: 6px;
+    }
+    .booTitle{
+      font-size: 12px;
+      color: var(--muted2);
+      letter-spacing:.2px;
+      user-select:none;
+    }
+    .booClose{
+      border:1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      cursor:pointer;
+      font-size: 12px;
       border-radius: 999px;
-      background: linear-gradient(90deg, transparent, rgba(0,0,0,.55), transparent);
-      opacity: 0;
-      transform: rotate(-6deg);
-      animation: none;
+      padding: 6px 10px;
+      transition: background 180ms ease, border-color 180ms ease, color 180ms ease;
     }
-    body.has-possessed .possess-streak{
-      animation: streakZip 760ms ease-in-out 110ms 1 both;
+    .booClose:hover{
+      background: var(--btn);
+      border-color: var(--line);
+      color: var(--text);
     }
-    @keyframes streakZip{
-      0%{ transform: translateX(0) rotate(-6deg); opacity: 0; }
-      12%{ opacity: .85; }
-      55%{ opacity: .95; }
-      100%{ transform: translateX(220vw) rotate(-6deg); opacity: 0; }
+    .booLines{
+      font-family: ui-serif, Georgia, "Times New Roman", Times, serif;
+      font-size: 16px;
+      line-height: 1.5;
+      color: var(--text);
+      margin: 6px 0 10px;
+      white-space: pre-wrap;
     }
+    .booChoices{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+    .booChoiceBtn{
+      border:1px solid var(--line);
+      background: var(--btn);
+      color: var(--text);
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      cursor:pointer;
+      transition: background 180ms ease;
+    }
+    .booChoiceBtn:hover{ background: var(--btnHover); }
 
-    body.has-possessed #writerScreen.active{
-      animation: possessedWobble 820ms cubic-bezier(.2,.9,.22,1) 0ms 1 both;
-      filter: blur(.75px) saturate(1.04) contrast(1.02);
+    .booInputWrap{
+      margin: 8px 0 10px;
+      display:none;
     }
-    @keyframes possessedWobble{
-      0%   { transform: rotate(0deg) translateY(0px); }
-      12%  { transform: rotate(-0.70deg) translateY(-1px); }
-      26%  { transform: rotate(0.95deg) translateY(0px); }
-      44%  { transform: rotate(-0.52deg) translateY(0px); }
-      62%  { transform: rotate(0.38deg) translateY(-1px); }
-      78%  { transform: rotate(-0.22deg) translateY(0px); }
-      100% { transform: rotate(0deg) translateY(0px); }
+    .booInputWrap.active{ display:block; }
+    .booInput{
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,.75);
+      font-size: 14px;
+      outline:none;
+      color: var(--text);
     }
-
-    body.has-possessed #writerScreen.active .editor{
-      box-shadow:
-        0 0 0 2px rgba(0,0,0,.10),
-        var(--shadow);
-      transition: box-shadow 120ms ease;
+    .booHint{
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--muted2);
+      line-height: 1.35;
     }
 
     /* Phone friendliness */
@@ -503,15 +573,18 @@
       .footer{ padding: 8px 10px 12px; }
       .footerInner{ flex-direction:column; align-items:flex-start; gap:6px; }
 
-      /* keep icon big but not ridiculous on phones */
       .appIcon{ width:56px; height:56px; border-radius:12px; }
+
+      .booPanel{
+        right: 10px;
+        bottom: 10px;
+        width: min(360px, calc(100vw - 20px));
+      }
     }
 
-    /* Reduce motion */
     @media (prefers-reduced-motion: reduce){
-      .possess-layer{ display:none; }
-      body.has-possessed #writerScreen.active{ animation:none; filter:none; }
-      body.has-possessed .possess-streak{ animation:none; }
+      .booPanel{ transition:none; }
+      .screen, .welcomeTitle, .beginBtn, .nameQuestion, .nameInput, .nameHint{ transition:none; transform:none; }
     }
   </style>
 </head>
@@ -520,11 +593,6 @@
   async src="//gc.zgo.at/count.js"></script>
 
 <body>
-  <!-- ✅ NEW: possession VFX layer -->
-  <div class="possess-layer" aria-hidden="true">
-    <div class="possess-streak"></div>
-  </div>
-
   <div class="app">
 
     <!-- WELCOME SCREEN -->
@@ -532,6 +600,25 @@
       <div class="centerStack">
         <div id="welcomeTitle" class="welcomeTitle">Welcome to Boo Writer.</div>
         <button id="beginBtn" class="beginBtn" type="button">Let’s begin</button>
+      </div>
+    </section>
+
+    <!-- NAME SCREEN (between welcome and writer) -->
+    <section id="nameScreen" class="screen" aria-label="Your name">
+      <div class="centerStack">
+        <div id="nameQuestion" class="nameQuestion">What is your name?</div>
+        <input
+          id="nameInput"
+          class="nameInput"
+          type="text"
+          inputmode="text"
+          autocomplete="name"
+          maxlength="32"
+          placeholder="Type your name…"
+          aria-label="Your name"
+        />
+        <div id="nameHint" class="nameHint">This stays on this device.</div>
+        <button id="nameContinueBtn" class="beginBtn" type="button">Continue</button>
       </div>
     </section>
 
@@ -671,11 +758,26 @@
 
   </div>
 
+  <!-- Boo companion panel -->
+  <aside id="booPanel" class="booPanel" aria-live="polite" aria-label="Boo">
+    <div class="booHeader">
+      <div class="booTitle">Boo</div>
+      <button id="booCloseBtn" class="booClose" type="button">Close</button>
+    </div>
+
+    <div id="booLines" class="booLines"></div>
+
+    <div id="booInputWrap" class="booInputWrap">
+      <input id="booInput" class="booInput" type="text" autocomplete="off" />
+      <div id="booHint" class="booHint"></div>
+    </div>
+
+    <div id="booChoices" class="booChoices"></div>
+  </aside>
+
   <script>
     // ---------------------------
     // Boo Writer — single-file v1
-    // Paper theme default, responsive top controls, toolbar aligns to editor width.
-    // Also: make "12" feel larger by scaling the UI size list.
     // ---------------------------
 
     const $ = (id) => document.getElementById(id);
@@ -683,6 +785,12 @@
     const welcomeScreen = $("welcomeScreen");
     const welcomeTitle  = $("welcomeTitle");
     const beginBtn      = $("beginBtn");
+
+    const nameScreen = $("nameScreen");
+    const nameQuestion = $("nameQuestion");
+    const nameInput = $("nameInput");
+    const nameHint = $("nameHint");
+    const nameContinueBtn = $("nameContinueBtn");
 
     const writerScreen  = $("writerScreen");
     const editor        = $("editor");
@@ -715,16 +823,23 @@
     const privacyOverlay= $("privacyOverlay");
     const closePrivacy  = $("closePrivacy");
 
-    // ✅ NEW: Boo icon button (top-right)
     const booIconBtn = $("booIconBtn");
 
+    // Boo UI
+    const booPanel = $("booPanel");
+    const booCloseBtn = $("booCloseBtn");
+    const booLinesEl = $("booLines");
+    const booChoicesEl = $("booChoices");
+    const booInputWrap = $("booInputWrap");
+    const booInput = $("booInput");
+    const booHintEl = $("booHint");
+
     // --- Font size mapping ---
-    const SIZE_SCALE = 1.55; // 12 -> ~19px
+    const SIZE_SCALE = 1.55;
     const MIN_SIZE = 8;
     const MAX_SIZE = 36;
-    const DEFAULT_UI_SIZE = 16; // default looks calm (16 -> ~25px)
+    const DEFAULT_UI_SIZE = 16;
 
-    // Populate font sizes 8–36
     for (let s = MIN_SIZE; s <= MAX_SIZE; s += 1) {
       const opt = document.createElement("option");
       opt.value = String(s);
@@ -737,6 +852,10 @@
     const STORAGE_KEY = "boo_writer_docs_v1";
     const SETTINGS_KEY = "boo_writer_settings_v1";
     const SESSION_KEY = "boo_writer_current_doc_id_v1";
+
+    // Boo state
+    const BOO_STATE_KEY = "boo_writer_boo_state_v1";
+    const BOO_SCENES_URL = "assets/boo/summonboo/scenes.json";
 
     let currentDocId = null;
     let history = [];
@@ -817,17 +936,39 @@
       editor.focus();
     }
 
-    function fadeToWriter(){
+    function fadeToName(){
       welcomeScreen.classList.remove("active");
+      nameScreen.classList.add("active");
+      // animate in
+      setTimeout(() => {
+        nameQuestion.classList.add("show");
+        setTimeout(() => nameInput.classList.add("show"), 240);
+        setTimeout(() => nameHint.classList.add("show"), 420);
+        setTimeout(() => nameContinueBtn.classList.add("show"), 520);
+        setTimeout(() => nameInput.focus(), 560);
+      }, 40);
+    }
+
+    function fadeToWriter(){
+      nameScreen.classList.remove("active");
       writerScreen.classList.add("active");
       setTimeout(() => editor.focus(), 560);
     }
 
     function fadeToWelcome(){
       writerScreen.classList.remove("active");
+      nameScreen.classList.remove("active");
       welcomeScreen.classList.add("active");
+
+      // reset animations
       welcomeTitle.classList.remove("show");
       beginBtn.classList.remove("show");
+
+      nameQuestion.classList.remove("show");
+      nameInput.classList.remove("show");
+      nameHint.classList.remove("show");
+      nameContinueBtn.classList.remove("show");
+
       setTimeout(() => {
         welcomeTitle.classList.add("show");
         setTimeout(() => beginBtn.classList.add("show"), 420);
@@ -1060,57 +1201,365 @@
       setTimeout(() => beginBtn.classList.add("show"), 680);
     }
 
-    /***********************
-     * ✅ NEW: Possession logic
-     * - triggers ONLY from booIconBtn click
-     * - ignores if writer screen isn’t active
-     * - cancels immediately on typing / focusing editor
-     ***********************/
-    let possessed = false;
-    let possessTimer = null;
+    // ---------------------------
+    // Boo companion engine (non-AI, choice-based)
+    // ---------------------------
 
-    function isReducedMotion(){
-      return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const DEFAULT_SCENES = {
+      meta: {
+        version: "1.0",
+        allowSummonWhenMuted: true
+      },
+      scenes: {
+        intro_1: {
+          lines: [
+            "Hi… I’m Boo. I live in Boo Writer 👻",
+            "Hello. I’m Boo — a little ghost in the machine 👻"
+          ],
+          choices: [
+            { label: "Who are you?", goto: "who_1" },
+            { label: "Thank you, Boo…", goto: "thanks_1", effects: [{ type:"affinity", delta: 1 }] },
+            { label: "Say less…", goto: "mute_1", effects: [{ type:"set", key:"booMuted", value:true }] }
+          ]
+        },
+        who_1: {
+          lines: [
+            "I drift around your words and keep you company.",
+            "I’m here for the quiet parts — the parts that just need someone nearby."
+          ],
+          choices: [
+            { label: "A ghost?!", goto: "ghost_1" },
+            { label: "Okay. Stay close.", goto: "stay_1", effects: [{ type:"affinity", delta: 1 }] },
+            { label: "Say less…", goto: "mute_1", effects: [{ type:"set", key:"booMuted", value:true }] }
+          ]
+        },
+        ghost_1: {
+          lines: [
+            "That’s right. A friendly one. I won’t get in the way 🙂",
+            "Yep. I’m here whenever you need me."
+          ],
+          choices: [
+            { label: "Back to writing.", goto: "end" },
+            { label: "Stay with me.", goto: "stay_1" }
+          ]
+        },
+        thanks_1: {
+          lines: [
+            "You’re welcome, {{name}}.",
+            "Anytime, {{name}}."
+          ],
+          choices: [
+            { label: "Stay with me.", goto: "stay_1" },
+            { label: "Back to writing.", goto: "end" }
+          ]
+        },
+        mute_1: {
+          lines: [
+            "Okay. I’ll go quiet.\n\nIf you want me back, tap the Boo icon."
+          ],
+          choices: [
+            { label: "Okay.", goto: "end" }
+          ]
+        },
+        stay_1: {
+          lines: [
+            "I’m here, {{name}}.\n\nYou don’t have to write a lot. Just one honest line.",
+            "I’m staying close, {{name}}.\n\nTake your time."
+          ],
+          choices: [
+            { label: "What’s on your mind?", goto: "ask_mind_1" },
+            { label: "Earlier… what was I thinking about?", goto: "recall_1" },
+            { label: "Back to writing.", goto: "end" }
+          ]
+        },
+        ask_mind_1: {
+          lines: [
+            "What’s on your mind right now, {{name}}?",
+            "What are you carrying as you write, {{name}}?"
+          ],
+          choices: [
+            { label: "I’ll type it.", goto: "capture_note_1" },
+            { label: "Not sure.", goto: "end_soft_1" },
+            { label: "Back to writing.", goto: "end" }
+          ]
+        },
+        capture_note_1: {
+          lines: [
+            "Okay, {{name}}.\n\nType a sentence or two — I’ll remember the shape of it."
+          ],
+          input: { placeholder: "A sentence or two…", storeAs: "note", hint: "This stays on this device." },
+          choices: [
+            { label: "Save", goto: "saved_note_1", effects: [{ type:"appendNote", tag:"mind" }] },
+            { label: "Never mind", goto: "end" }
+          ]
+        },
+        saved_note_1: {
+          lines: [
+            "Thank you, {{name}}. I’ll hold that gently."
+          ],
+          choices: [
+            { label: "Back to writing.", goto: "end" }
+          ]
+        },
+        recall_1: {
+          lines: [
+            "{{recallLine}}"
+          ],
+          choices: [
+            { label: "Thank you, Boo…", goto: "thanks_1", effects: [{ type:"affinity", delta: 1 }] },
+            { label: "Say less…", goto: "mute_1", effects: [{ type:"set", key:"booMuted", value:true }] },
+            { label: "Back to writing.", goto: "end" }
+          ]
+        },
+        end_soft_1: {
+          lines: [
+            "That’s okay, {{name}}.\n\nYou don’t have to name it to let it move."
+          ],
+          choices: [
+            { label: "Back to writing.", goto: "end" }
+          ]
+        },
+        end: { lines: [""] }
+      }
+    };
+
+    let booData = null;
+
+    function loadBooState(){
+      try {
+        const raw = localStorage.getItem(BOO_STATE_KEY);
+        if (!raw) return { booMuted:false, affinity:0, notes:[], name:"", seen:{} };
+        const parsed = JSON.parse(raw);
+        return {
+          booMuted: !!parsed.booMuted,
+          affinity: Number(parsed.affinity || 0),
+          notes: Array.isArray(parsed.notes) ? parsed.notes : [],
+          name: typeof parsed.name === "string" ? parsed.name : "",
+          hasMetBoo: !!parsed.hasMetBoo,
+          seen: typeof parsed.seen === "object" && parsed.seen ? parsed.seen : {}
+        };
+      } catch {
+        return { booMuted:false, affinity:0, notes:[], name:"", seen:{} };
+      }
     }
-    function clearPossession(){
-      if (!possessed) return;
-      possessed = false;
-      clearTimeout(possessTimer);
-      possessTimer = null;
-      document.body.classList.remove("has-possessed");
+    function saveBooState(state){
+      localStorage.setItem(BOO_STATE_KEY, JSON.stringify(state));
     }
-    function possessPage(){
-      if (!writerScreen.classList.contains("active")) return;   // only when writer screen is showing
-      if (possessed) return;                                    // don’t stack
-      if (openOverlay.classList.contains("active")) return;     // don’t fight modals
+
+    function openBooPanel(){
+      booPanel.classList.add("active");
+    }
+    function closeBooPanel(){
+      booPanel.classList.remove("active");
+      booChoicesEl.innerHTML = "";
+      booLinesEl.textContent = "";
+      booInputWrap.classList.remove("active");
+      booInput.value = "";
+      editor.focus();
+    }
+
+    function pickNonRepeatingLine(sceneId, lines, state){
+      if (!Array.isArray(lines) || lines.length === 0) return "";
+      state.seen ||= {};
+      state.seen[sceneId] ||= { pool: [] };
+
+      const bucket = state.seen[sceneId];
+
+      if (!Array.isArray(bucket.pool) || bucket.pool.length === 0) {
+        bucket.pool = lines.slice();
+        for (let i = bucket.pool.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [bucket.pool[i], bucket.pool[j]] = [bucket.pool[j], bucket.pool[i]];
+        }
+      }
+
+      const next = bucket.pool.pop();
+      saveBooState(state);
+      return String(next || "");
+    }
+
+    function latestNoteText(state){
+      const notes = state.notes || [];
+      if (notes.length === 0) return "";
+      const last = notes[notes.length - 1];
+      return (last && last.text) ? String(last.text) : "";
+    }
+
+    function renderScene(sceneId){
+      const state = loadBooState();
+      const scenes = booData?.scenes || DEFAULT_SCENES.scenes;
+      const scene = scenes[sceneId] || scenes["intro_1"];
+
+      // input handling
+      booInputWrap.classList.remove("active");
+      booInput.value = "";
+      booInput.dataset.storeAs = "";
+      booHintEl.textContent = "";
+
+      // templates
+      const rawName = (state.name || "").trim();
+      const safeName = rawName || "friend"; // fallback so {{name}} never becomes blank
+      const note = latestNoteText(state);
+
+      // recall line (verbatim note; no interpretation)
+      const recallLine = note
+        ? `Hey ${safeName}… earlier you were thinking about:\n“${note}”\n\nHow is it now?`
+        : `Hey ${safeName}… I don’t have anything saved yet.\n\nIf you want, tell me what’s on your mind.`;
+
+      let rawLine = pickNonRepeatingLine(sceneId, scene.lines || [""], state);
+
+      rawLine = rawLine
+        .replaceAll("{{name}}", safeName)
+        .replaceAll("{{recallLine}}", recallLine);
+
+      booLinesEl.textContent = rawLine;
+
+      if (scene.input && typeof scene.input === "object") {
+        booInputWrap.classList.add("active");
+        booInput.placeholder = scene.input.placeholder || "";
+        booInput.dataset.storeAs = scene.input.storeAs || "note";
+        booHintEl.textContent = scene.input.hint || "";
+        setTimeout(() => booInput.focus(), 40);
+      }
+
+      booChoicesEl.innerHTML = "";
+      const choices = Array.isArray(scene.choices) ? scene.choices : [];
+
+      for (const ch of choices) {
+        const btn = document.createElement("button");
+        btn.className = "booChoiceBtn";
+        btn.type = "button";
+        btn.textContent = ch.label || "…";
+        btn.onclick = () => {
+          applyEffects(ch.effects || []);
+          const next = ch.goto || "end";
+          if (next === "end") return closeBooPanel();
+          renderScene(next);
+        };
+        booChoicesEl.appendChild(btn);
+      }
+
+      saveBooState(state);
+    }
+
+    function applyEffects(effects){
+      const state = loadBooState();
+      for (const eff of effects) {
+        if (!eff || typeof eff !== "object") continue;
+
+        if (eff.type === "set") {
+          state[eff.key] = eff.value;
+        }
+
+        if (eff.type === "affinity") {
+          const d = Number(eff.delta || 0);
+          state.affinity = Number(state.affinity || 0) + d;
+        }
+
+        if (eff.type === "appendNote") {
+          const text = (booInput.value || "").trim();
+          if (text) {
+            state.notes ||= [];
+            state.notes.push({
+              ts: nowIso(),
+              tag: eff.tag || (booInput.dataset.storeAs || "note"),
+              text
+            });
+          }
+        }
+      }
+      saveBooState(state);
+    }
+
+    async function loadBooScenesOnce(){
+      if (booData) return booData;
+      try {
+        const res = await fetch(BOO_SCENES_URL, { cache: "no-store" });
+        if (!res.ok) throw new Error("Failed to fetch scenes.json");
+        const json = await res.json();
+        if (!json || typeof json !== "object" || !json.scenes) throw new Error("Invalid scenes.json");
+        booData = json;
+        return booData;
+      } catch {
+        booData = DEFAULT_SCENES;
+        return booData;
+      }
+    }
+
+    async function summonBoo(){
+      if (!writerScreen.classList.contains("active")) return;
+      if (openOverlay.classList.contains("active")) return;
       if (finishOverlay.classList.contains("active")) return;
       if (privacyOverlay.classList.contains("active")) return;
 
-      possessed = true;
+      const state = loadBooState();
+      const data = await loadBooScenesOnce();
+      const allowSummonWhenMuted = !!(data.meta && data.meta.allowSummonWhenMuted);
 
-      if (isReducedMotion()){
-        // no motion for reduce-motion users
-        possessed = false;
-        return;
+      if (state.booMuted && !allowSummonWhenMuted) return;
+
+      openBooPanel();
+      if (!state.hasMetBoo) {
+        state.hasMetBoo = true;
+        saveBooState(state);
+        renderScene("intro_1");
+      } else {
+        renderScene("stay_1");
       }
-
-      document.body.classList.add("has-possessed");
-      possessTimer = setTimeout(clearPossession, 900);
     }
 
-    booIconBtn?.addEventListener("click", (e) => {
-      e.preventDefault();
-      possessPage();
+    // Close Boo on ESC if open
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && booPanel.classList.contains("active")) {
+        e.preventDefault();
+        closeBooPanel();
+      }
     });
 
-    // typing cancels the effect instantly
-    document.addEventListener("keydown", () => {
-      if (!possessed) return;
-      clearPossession();
-    }, { capture: true });
+    booCloseBtn.addEventListener("click", closeBooPanel);
+    booIconBtn?.addEventListener("click", (e) => {
+      e.preventDefault();
+      summonBoo();
+    });
 
-    // focusing editor cancels (so it never blocks writing)
-    editor.addEventListener("focus", clearPossession);
+    // ---------------------------
+    // Name capture (quiet + local)
+    // ---------------------------
+    function setUserName(name){
+      const cleaned = String(name || "").trim().replace(/\s+/g, " ").slice(0, 32);
+      const state = loadBooState();
+      state.name = cleaned;
+      saveBooState(state);
+    }
+
+    function proceedFromName(){
+      const typed = (nameInput.value || "").trim();
+      // Allow empty -> fallback "friend"
+      setUserName(typed);
+      // initialize documents and go to writer
+      const docs = loadDocs();
+      const last = localStorage.getItem(SESSION_KEY);
+      if (!last || !docs[last]) {
+        newDocument();
+      } else {
+        currentDocId = last;
+        openDocument(currentDocId);
+      }
+      fadeToWriter();
+    }
+
+    // Events
+    beginBtn.addEventListener("click", () => {
+      fadeToName();
+    });
+
+    nameContinueBtn.addEventListener("click", proceedFromName);
+    nameInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter"){
+        e.preventDefault();
+        proceedFromName();
+      }
+    });
 
     function init(){
       runWelcomeAnimation();
@@ -1118,10 +1567,8 @@
       const s = loadSettings();
       if (s.fontFamily) fontSelect.value = s.fontFamily;
       if (s.fontSizeUI) fontSize.value = String(s.fontSizeUI);
-
       if (s.alignment) alignment = s.alignment;
       if (typeof s.indentEnabled === "boolean") indentEnabled = s.indentEnabled;
-
       applyTypography();
 
       resetHistory();
@@ -1129,18 +1576,11 @@
 
       const last = localStorage.getItem(SESSION_KEY);
       if (last) currentDocId = last;
-    }
 
-    // Events
-    beginBtn.addEventListener("click", () => {
-      const docs = loadDocs();
-      if (!currentDocId || !docs[currentDocId]) {
-        newDocument();
-      } else {
-        openDocument(currentDocId);
-      }
-      fadeToWriter();
-    });
+      // if name already exists, prefill
+      const bs = loadBooState();
+      if (bs.name) nameInput.value = bs.name;
+    }
 
     openBtn.addEventListener("click", () => {
       renderDocList();
@@ -1191,9 +1631,6 @@
       snapshotTimer = setTimeout(() => {
         pushHistory(getPlainText());
       }, 350);
-
-      // ✅ also cancels possession immediately if it’s still running
-      clearPossession();
     });
 
     // Shortcuts
@@ -1230,7 +1667,6 @@
       }
     });
 
-    // Click outside card closes overlay
     for (const ov of [openOverlay, finishOverlay, privacyOverlay]){
       ov.addEventListener("click", (e) => {
         if (e.target === ov) hideOverlay(ov);
