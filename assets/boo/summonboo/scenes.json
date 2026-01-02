@@ -67,7 +67,7 @@
         "What’s on your mind right now, {{name}}?"
       ],
       "choices": [
-        { "label": "I’ll type it.", "goto": "capture_note_1" },
+        { "label": "Continue.", "goto": "capture_note_1" },
         { "label": "Back to writing.", "goto": "end" }
       ]
     },
