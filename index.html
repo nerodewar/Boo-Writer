@@ -189,6 +189,7 @@
       gap:10px;
     }
 
+    /* Toolbar wraps nicely on small screens */
     .toolbar{
       display:flex;
       align-items:center;
@@ -198,6 +199,7 @@
       flex:1;
     }
 
+    /* Each group can flex to fit */
     .toolGroup{
       display:flex;
       align-items:center;
@@ -239,6 +241,7 @@
     }
     select option{ color:#111; }
 
+    /* ✅ Big icon, but doesn't force a big “gap” */
     .appIconWrap{
       flex-shrink:0;
       display:flex;
@@ -248,6 +251,7 @@
       position: relative;
     }
 
+    /* ✅ Make the icon clickable (button) without changing layout */
     .appIconBtn{
       border: none;
       background: transparent;
@@ -299,7 +303,7 @@
       outline:none;
       overflow:auto;
       line-height: 1.7;
-      font-size: 20px;
+      font-size: 20px; /* base feels calmer */
       caret-color: var(--editorCaret);
       font-family: ui-serif, Georgia, "Times New Roman", Times, serif;
       white-space: pre-wrap;
@@ -463,7 +467,7 @@
     }
 
     /***********************
-     * ✅ Boo companion UI
+     * Boo companion UI
      ***********************/
     .booPanel{
       position: fixed;
@@ -573,6 +577,7 @@
       .footer{ padding: 8px 10px 12px; }
       .footerInner{ flex-direction:column; align-items:flex-start; gap:6px; }
 
+      /* keep icon big but not ridiculous on phones */
       .appIcon{ width:56px; height:56px; border-radius:12px; }
 
       .booPanel{
@@ -582,9 +587,12 @@
       }
     }
 
+    /* Reduce motion */
     @media (prefers-reduced-motion: reduce){
-      .booPanel{ transition:none; }
-      .screen, .welcomeTitle, .beginBtn, .nameQuestion, .nameInput, .nameHint{ transition:none; transform:none; }
+      .screen, .welcomeTitle, .beginBtn, .nameQuestion, .nameInput, .nameHint, .booPanel{
+        transition:none;
+        transform:none;
+      }
     }
   </style>
 </head>
@@ -606,7 +614,7 @@
     <!-- NAME SCREEN (between welcome and writer) -->
     <section id="nameScreen" class="screen" aria-label="Your name">
       <div class="centerStack">
-        <div id="nameQuestion" class="nameQuestion">Choose your username</div>
+        <div id="nameQuestion" class="nameQuestion">What is your name?</div>
         <input
           id="nameInput"
           class="nameInput"
@@ -671,11 +679,11 @@
               id="booIconBtn"
               class="appIconBtn"
               type="button"
-              aria-label="Boo Writer"
-              title="Boo Writer"
+              aria-label="Summon Boo"
+              title="Summon Boo"
             >
               <img
-                src="assets/icon/summon-boo.png"
+                src="assets/icon/boo-writer.png"
                 alt=""
                 class="appIcon"
                 aria-hidden="true"
@@ -835,10 +843,10 @@
     const booHintEl = $("booHint");
 
     // --- Font size mapping ---
-    const SIZE_SCALE = 1.55;
+    const SIZE_SCALE = 1.55; // 12 -> ~19px
     const MIN_SIZE = 8;
     const MAX_SIZE = 36;
-    const DEFAULT_UI_SIZE = 16;
+    const DEFAULT_UI_SIZE = 16; // default looks calm (16 -> ~25px)
 
     for (let s = MIN_SIZE; s <= MAX_SIZE; s += 1) {
       const opt = document.createElement("option");
@@ -852,10 +860,6 @@
     const STORAGE_KEY = "boo_writer_docs_v1";
     const SETTINGS_KEY = "boo_writer_settings_v1";
     const SESSION_KEY = "boo_writer_current_doc_id_v1";
-
-    // Boo state
-    const BOO_STATE_KEY = "boo_writer_boo_state_v1";
-    const BOO_SCENES_URL = "assets/boo/summonboo/scenes.json";
 
     let currentDocId = null;
     let history = [];
@@ -939,6 +943,7 @@
     function fadeToName(){
       welcomeScreen.classList.remove("active");
       nameScreen.classList.add("active");
+
       // animate in
       setTimeout(() => {
         nameQuestion.classList.add("show");
@@ -1202,133 +1207,19 @@
     }
 
     // ---------------------------
-    // Boo companion engine (non-AI, choice-based)
+    // Boo companion engine (JSON-only)
+    // Loads scenes from: assets/boo/summonboo/scenes.json
     // ---------------------------
 
-    const DEFAULT_SCENES = {
-      meta: {
-        version: "1.0",
-        allowSummonWhenMuted: true
-      },
-      scenes: {
-        intro_1: {
-          lines: [
-            "Hi… I’m Boo. I live in Boo Writer 👻",
-            "Hello. I’m Boo — a little ghost in the machine 👻"
-          ],
-          choices: [
-            { label: "Who are you?", goto: "who_1" },
-            { label: "Thank you, Boo…", goto: "thanks_1", effects: [{ type:"affinity", delta: 1 }] },
-            { label: "Say less…", goto: "mute_1", effects: [{ type:"set", key:"booMuted", value:true }] }
-          ]
-        },
-        who_1: {
-          lines: [
-            "I drift around your words and keep you company.",
-            "I’m here for the quiet parts — the parts that just need someone nearby."
-          ],
-          choices: [
-            { label: "A ghost?!", goto: "ghost_1" },
-            { label: "Okay. Stay close.", goto: "stay_1", effects: [{ type:"affinity", delta: 1 }] },
-            { label: "Say less…", goto: "mute_1", effects: [{ type:"set", key:"booMuted", value:true }] }
-          ]
-        },
-        ghost_1: {
-          lines: [
-            "That’s right. A friendly one. I won’t get in the way 🙂",
-            "Yep. I’m here whenever you need me."
-          ],
-          choices: [
-            { label: "Back to writing.", goto: "end" },
-            { label: "Stay with me.", goto: "stay_1" }
-          ]
-        },
-        thanks_1: {
-          lines: [
-            "You’re welcome, {{name}}.",
-            "Anytime, {{name}}."
-          ],
-          choices: [
-            { label: "Stay with me.", goto: "stay_1" },
-            { label: "Back to writing.", goto: "end" }
-          ]
-        },
-        mute_1: {
-          lines: [
-            "Okay. I’ll go quiet.\n\nIf you want me back, tap the Boo icon."
-          ],
-          choices: [
-            { label: "Okay.", goto: "end" }
-          ]
-        },
-        stay_1: {
-          lines: [
-            "I’m here, {{name}}.\n\nYou don’t have to write a lot. Just one honest line.",
-            "I’m staying close, {{name}}.\n\nTake your time."
-          ],
-          choices: [
-            { label: "What’s on your mind?", goto: "ask_mind_1" },
-            { label: "Earlier… what was I thinking about?", goto: "recall_1" },
-            { label: "Back to writing.", goto: "end" }
-          ]
-        },
-        ask_mind_1: {
-          lines: [
-            "What’s on your mind right now, {{name}}?",
-            "What are you carrying as you write, {{name}}?"
-          ],
-          choices: [
-            { label: "I’ll type it.", goto: "capture_note_1" },
-            { label: "Not sure.", goto: "end_soft_1" },
-            { label: "Back to writing.", goto: "end" }
-          ]
-        },
-        capture_note_1: {
-          lines: [
-            "Okay, {{name}}.\n\nType a sentence or two — I’ll remember the shape of it."
-          ],
-          input: { placeholder: "A sentence or two…", storeAs: "note", hint: "This stays on this device." },
-          choices: [
-            { label: "Save", goto: "saved_note_1", effects: [{ type:"appendNote", tag:"mind" }] },
-            { label: "Never mind", goto: "end" }
-          ]
-        },
-        saved_note_1: {
-          lines: [
-            "Thank you, {{name}}. I’ll hold that gently."
-          ],
-          choices: [
-            { label: "Back to writing.", goto: "end" }
-          ]
-        },
-        recall_1: {
-          lines: [
-            "{{recallLine}}"
-          ],
-          choices: [
-            { label: "Thank you, Boo…", goto: "thanks_1", effects: [{ type:"affinity", delta: 1 }] },
-            { label: "Say less…", goto: "mute_1", effects: [{ type:"set", key:"booMuted", value:true }] },
-            { label: "Back to writing.", goto: "end" }
-          ]
-        },
-        end_soft_1: {
-          lines: [
-            "That’s okay, {{name}}.\n\nYou don’t have to name it to let it move."
-          ],
-          choices: [
-            { label: "Back to writing.", goto: "end" }
-          ]
-        },
-        end: { lines: [""] }
-      }
-    };
+    const BOO_STATE_KEY = "boo_writer_boo_state_v1";
+    const BOO_SCENES_URL = "assets/boo/summonboo/scenes.json";
 
     let booData = null;
 
     function loadBooState(){
       try {
         const raw = localStorage.getItem(BOO_STATE_KEY);
-        if (!raw) return { booMuted:false, affinity:0, notes:[], name:"", seen:{} };
+        if (!raw) return { booMuted:false, affinity:0, notes:[], name:"", hasMetBoo:false, seen:{} };
         const parsed = JSON.parse(raw);
         return {
           booMuted: !!parsed.booMuted,
@@ -1336,19 +1227,17 @@
           notes: Array.isArray(parsed.notes) ? parsed.notes : [],
           name: typeof parsed.name === "string" ? parsed.name : "",
           hasMetBoo: !!parsed.hasMetBoo,
-          seen: typeof parsed.seen === "object" && parsed.seen ? parsed.seen : {}
+          seen: (parsed.seen && typeof parsed.seen === "object") ? parsed.seen : {}
         };
       } catch {
-        return { booMuted:false, affinity:0, notes:[], name:"", seen:{} };
+        return { booMuted:false, affinity:0, notes:[], name:"", hasMetBoo:false, seen:{} };
       }
     }
     function saveBooState(state){
       localStorage.setItem(BOO_STATE_KEY, JSON.stringify(state));
     }
 
-    function openBooPanel(){
-      booPanel.classList.add("active");
-    }
+    function openBooPanel(){ booPanel.classList.add("active"); }
     function closeBooPanel(){
       booPanel.classList.remove("active");
       booChoicesEl.innerHTML = "";
@@ -1356,6 +1245,13 @@
       booInputWrap.classList.remove("active");
       booInput.value = "";
       editor.focus();
+    }
+
+    function latestNoteText(state){
+      const notes = state.notes || [];
+      if (notes.length === 0) return "";
+      const last = notes[notes.length - 1];
+      return (last && last.text) ? String(last.text) : "";
     }
 
     function pickNonRepeatingLine(sceneId, lines, state){
@@ -1378,30 +1274,88 @@
       return String(next || "");
     }
 
-    function latestNoteText(state){
-      const notes = state.notes || [];
-      if (notes.length === 0) return "";
-      const last = notes[notes.length - 1];
-      return (last && last.text) ? String(last.text) : "";
+    function renderBooError(message){
+      openBooPanel();
+      booInputWrap.classList.remove("active");
+      booLinesEl.textContent = message;
+      booChoicesEl.innerHTML = "";
+      const btn = document.createElement("button");
+      btn.className = "booChoiceBtn";
+      btn.type = "button";
+      btn.textContent = "Close";
+      btn.onclick = closeBooPanel;
+      booChoicesEl.appendChild(btn);
+    }
+
+    async function loadBooScenesOnce(){
+      if (booData) return booData;
+
+      const res = await fetch(BOO_SCENES_URL, { cache: "no-store" });
+      if (!res.ok) throw new Error(`Failed to fetch scenes.json (${res.status})`);
+
+      const json = await res.json();
+      if (!json || typeof json !== "object" || !json.scenes || typeof json.scenes !== "object") {
+        throw new Error("Invalid scenes.json (missing scenes object)");
+      }
+
+      // soft defaults
+      if (!json.meta || typeof json.meta !== "object") json.meta = {};
+      if (typeof json.meta.allowSummonWhenMuted !== "boolean") json.meta.allowSummonWhenMuted = true;
+
+      booData = json;
+      return booData;
+    }
+
+    function applyEffects(effects){
+      const state = loadBooState();
+      for (const eff of (Array.isArray(effects) ? effects : [])) {
+        if (!eff || typeof eff !== "object") continue;
+
+        if (eff.type === "set") {
+          state[eff.key] = eff.value;
+        }
+
+        if (eff.type === "affinity") {
+          const d = Number(eff.delta || 0);
+          state.affinity = Number(state.affinity || 0) + d;
+        }
+
+        if (eff.type === "appendNote") {
+          const text = (booInput.value || "").trim();
+          if (text) {
+            state.notes ||= [];
+            state.notes.push({
+              ts: nowIso(),
+              tag: eff.tag || (booInput.dataset.storeAs || "note"),
+              text
+            });
+          }
+        }
+      }
+      saveBooState(state);
     }
 
     function renderScene(sceneId){
       const state = loadBooState();
-      const scenes = booData?.scenes || DEFAULT_SCENES.scenes;
-      const scene = scenes[sceneId] || scenes["intro_1"];
+      const scenes = booData.scenes;
+      const scene = scenes[sceneId];
 
-      // input handling
+      if (!scene) {
+        renderBooError("Boo couldn’t find that scene.\n\n(Scenes file may be missing an id.)");
+        return;
+      }
+
+      // reset input
       booInputWrap.classList.remove("active");
       booInput.value = "";
       booInput.dataset.storeAs = "";
       booHintEl.textContent = "";
 
-      // templates
       const rawName = (state.name || "").trim();
-      const safeName = rawName || "friend"; // fallback so {{name}} never becomes blank
+      const safeName = rawName || "friend";
       const note = latestNoteText(state);
 
-      // recall line (verbatim note; no interpretation)
+      // recall line (verbatim note, no interpretation)
       const recallLine = note
         ? `Hey ${safeName}… earlier you were thinking about:\n“${note}”\n\nHow is it now?`
         : `Hey ${safeName}… I don’t have anything saved yet.\n\nIf you want, tell me what’s on your mind.`;
@@ -1442,89 +1396,41 @@
       saveBooState(state);
     }
 
-    function applyEffects(effects){
-      const state = loadBooState();
-      for (const eff of effects) {
-        if (!eff || typeof eff !== "object") continue;
-
-        if (eff.type === "set") {
-          state[eff.key] = eff.value;
-        }
-
-        if (eff.type === "affinity") {
-          const d = Number(eff.delta || 0);
-          state.affinity = Number(state.affinity || 0) + d;
-        }
-
-        if (eff.type === "appendNote") {
-          const text = (booInput.value || "").trim();
-          if (text) {
-            state.notes ||= [];
-            state.notes.push({
-              ts: nowIso(),
-              tag: eff.tag || (booInput.dataset.storeAs || "note"),
-              text
-            });
-          }
-        }
-      }
-      saveBooState(state);
-    }
-
-    async function loadBooScenesOnce(){
-      if (booData) return booData;
-      try {
-        const res = await fetch(BOO_SCENES_URL, { cache: "no-store" });
-        if (!res.ok) throw new Error("Failed to fetch scenes.json");
-        const json = await res.json();
-        if (!json || typeof json !== "object" || !json.scenes) throw new Error("Invalid scenes.json");
-        booData = json;
-        return booData;
-      } catch {
-        booData = DEFAULT_SCENES;
-        return booData;
-      }
-    }
-
     async function summonBoo(){
       if (!writerScreen.classList.contains("active")) return;
       if (openOverlay.classList.contains("active")) return;
       if (finishOverlay.classList.contains("active")) return;
       if (privacyOverlay.classList.contains("active")) return;
 
-      const state = loadBooState();
-      const data = await loadBooScenesOnce();
-      const allowSummonWhenMuted = !!(data.meta && data.meta.allowSummonWhenMuted);
+      try {
+        const state = loadBooState();
+        const data = await loadBooScenesOnce();
 
-      if (state.booMuted && !allowSummonWhenMuted) return;
+        const allowSummonWhenMuted = !!data.meta.allowSummonWhenMuted;
+        if (state.booMuted && !allowSummonWhenMuted) return;
 
-      openBooPanel();
-      if (!state.hasMetBoo) {
-        state.hasMetBoo = true;
-        saveBooState(state);
-        renderScene("intro_1");
-      } else {
-        renderScene("stay_1");
+        openBooPanel();
+
+        const firstScene = (data.meta && data.meta.firstScene) ? String(data.meta.firstScene) : "intro_1";
+        const summonScene = (data.meta && data.meta.summonScene) ? String(data.meta.summonScene) : "stay_1";
+
+        if (!state.hasMetBoo) {
+          state.hasMetBoo = true;
+          saveBooState(state);
+          renderScene(firstScene);
+        } else {
+          renderScene(summonScene);
+        }
+      } catch (err) {
+        renderBooError("Boo isn’t available right now.\n\n(Scenes file couldn’t be loaded.)");
+        console.error(err);
       }
     }
-
-    // Close Boo on ESC if open
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && booPanel.classList.contains("active")) {
-        e.preventDefault();
-        closeBooPanel();
-      }
-    });
-
-    booCloseBtn.addEventListener("click", closeBooPanel);
-    booIconBtn?.addEventListener("click", (e) => {
-      e.preventDefault();
-      summonBoo();
-    });
 
     // ---------------------------
     // Name capture (quiet + local)
     // ---------------------------
+
     function setUserName(name){
       const cleaned = String(name || "").trim().replace(/\s+/g, " ").slice(0, 32);
       const state = loadBooState();
@@ -1534,32 +1440,24 @@
 
     function proceedFromName(){
       const typed = (nameInput.value || "").trim();
-      // Allow empty -> fallback "friend"
       setUserName(typed);
-      // initialize documents and go to writer
+
       const docs = loadDocs();
       const last = localStorage.getItem(SESSION_KEY);
+
       if (!last || !docs[last]) {
         newDocument();
       } else {
         currentDocId = last;
         openDocument(currentDocId);
       }
+
       fadeToWriter();
     }
 
-    // Events
-    beginBtn.addEventListener("click", () => {
-      fadeToName();
-    });
-
-    nameContinueBtn.addEventListener("click", proceedFromName);
-    nameInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter"){
-        e.preventDefault();
-        proceedFromName();
-      }
-    });
+    // ---------------------------
+    // App init + events
+    // ---------------------------
 
     function init(){
       runWelcomeAnimation();
@@ -1569,6 +1467,7 @@
       if (s.fontSizeUI) fontSize.value = String(s.fontSizeUI);
       if (s.alignment) alignment = s.alignment;
       if (typeof s.indentEnabled === "boolean") indentEnabled = s.indentEnabled;
+
       applyTypography();
 
       resetHistory();
@@ -1577,11 +1476,33 @@
       const last = localStorage.getItem(SESSION_KEY);
       if (last) currentDocId = last;
 
-      // if name already exists, prefill
+      // prefill name if it exists
       const bs = loadBooState();
       if (bs.name) nameInput.value = bs.name;
     }
 
+    // Welcome -> Name
+    beginBtn.addEventListener("click", () => {
+      fadeToName();
+    });
+
+    // Name -> Writer
+    nameContinueBtn.addEventListener("click", proceedFromName);
+    nameInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter"){
+        e.preventDefault();
+        proceedFromName();
+      }
+    });
+
+    // Boo summon
+    booIconBtn?.addEventListener("click", (e) => {
+      e.preventDefault();
+      summonBoo();
+    });
+    booCloseBtn.addEventListener("click", closeBooPanel);
+
+    // Open/Save/Finish etc
     openBtn.addEventListener("click", () => {
       renderDocList();
       showOverlay(openOverlay);
@@ -1633,16 +1554,24 @@
       }, 350);
     });
 
+    // One ESC handler (Boo first, then overlays)
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape") return;
+
+      if (booPanel.classList.contains("active")) {
+        e.preventDefault();
+        return closeBooPanel();
+      }
+
+      if (openOverlay.classList.contains("active")) { e.preventDefault(); return hideOverlay(openOverlay); }
+      if (finishOverlay.classList.contains("active")) { e.preventDefault(); return hideOverlay(finishOverlay); }
+      if (privacyOverlay.classList.contains("active")) { e.preventDefault(); return hideOverlay(privacyOverlay); }
+    });
+
     // Shortcuts
     document.addEventListener("keydown", (e) => {
       const isMac = navigator.platform.toUpperCase().includes("MAC");
       const mod = isMac ? e.metaKey : e.ctrlKey;
-
-      if (e.key === "Escape"){
-        if (openOverlay.classList.contains("active")) return hideOverlay(openOverlay);
-        if (finishOverlay.classList.contains("active")) return hideOverlay(finishOverlay);
-        if (privacyOverlay.classList.contains("active")) return hideOverlay(privacyOverlay);
-      }
 
       if (!mod) return;
       const k = e.key.toLowerCase();
@@ -1667,6 +1596,7 @@
       }
     });
 
+    // Click outside card closes overlay
     for (const ov of [openOverlay, finishOverlay, privacyOverlay]){
       ov.addEventListener("click", (e) => {
         if (e.target === ov) hideOverlay(ov);
