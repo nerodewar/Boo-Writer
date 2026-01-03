@@ -43,7 +43,7 @@
 
     "mute_1": {
       "lines": [
-        "Okay, {{name}}.\n\nI’ll go quiet. Tap the Boo icon if you want me back."
+        "Okay, {{name}}.\n\nI’ll go quiet. Tap Summon Boo if you want me back."
       ],
       "choices": [
         { "label": "Okay.", "goto": "end" }
@@ -59,15 +59,88 @@
         { "label": "Write a new memory...", "goto": "ask_mind_1" },
         { "label": "Earlier… what was I thinking about?", "goto": "recall_1" },
 
+        { "label": "Keep me company...", "goto": "keep_company_1" },
+
         { "label": "Clear all site data", "goto": "clear_data_1" },
 
-        { "label": "Back to writing.", "goto": "end" }
+        { "label": "Back to writing", "goto": "end" }
+      ]
+    },
+
+    "keep_company_1": {
+      "lines": [
+        "Let me tell ya, {{name}}... I've been around a loooong time... and I'm just getting started!"
+      ],
+      "choices": [
+        { "label": "A long time?", "goto": "keep_company_2" },
+        { "label": "Back to writing", "goto": "end" }
+      ]
+    },
+
+    "keep_company_2": {
+      "lines": [
+        "Yup... I sent my intern to get me crumpets some time ago... and I'm stiiiiillll waiting...!!"
+      ],
+      "choices": [
+        { "label": "Tell me more...", "goto": "keep_company_3" },
+        { "label": "Close", "goto": "end" }
+      ]
+    },
+
+    "keep_company_3": {
+      "lines": [
+        "Hey, {{name}}... Remember: If something scares you, float a little closer... Fear often looks different up close!"
+      ],
+      "choices": [
+        { "label": "I'm not afraid!", "goto": "keep_company_3_not_afraid_1" },
+        { "label": "Huh, I guess so...", "goto": "keep_company_3_guess_so_1" },
+        { "label": "Close", "goto": "end" }
+      ]
+    },
+
+    "keep_company_3_not_afraid_1": {
+      "lines": [
+        "Mmmhmm. That’s what all the bravest people say first 👻"
+      ],
+      "choices": [
+        { "label": "Continue", "goto": "keep_company_4" },
+        { "label": "Close", "goto": "end" }
+      ]
+    },
+
+    "keep_company_3_guess_so_1": {
+      "lines": [
+        "Exactly. Sometimes the shadowy part is just the distance..."
+      ],
+      "choices": [
+        { "label": "Continue", "goto": "keep_company_4" },
+        { "label": "Close", "goto": "end" }
+      ]
+    },
+
+    "keep_company_4": {
+      "lines": [
+        "And remember: Just because something is invisible doesn't mean it isn't <i>real</i> -- like love, rest, or hope!"
+      ],
+      "choices": [
+        { "label": "Tell me more...", "goto": "keep_company_5" },
+        { "label": "Close", "goto": "end" }
+      ]
+    },
+
+    "keep_company_5": {
+      "lines": [
+        "You know? Like, just because <i>I'm</i> invisible doesn't mean I don't care...  Now... Where <i>are</i> those crumpets? <i>Hmm...</i>"
+      ],
+      "choices": [
+        { "label": "Write a new memory", "goto": "ask_mind_1" },
+        { "label": "Close", "goto": "end" }
       ]
     },
 
     "clear_data_1": {
       "lines": [
-        "I can do that.\n\nThis will clear your name, your memories, and any saved files for Boo Writer on this device.\n\nIt can’t be undone."
+        "I can do that.\n\nThis will clear your name, Boo’s memories, your saved journal entries, and any settings for Journal Boo on this device.\n\nIt can’t be undone."
       ],
       "choices": [
         { "label": "Cancel", "goto": "stay_1" },
@@ -77,36 +150,25 @@
 
     "clear_data_confirm_1": {
       "lines": [
-        "Last check, {{name}}.\n\nDo you want me to clear everything now?"
+        "Last check, {{name}}.\n\nIf you continue, I’ll open a final confirmation where you’ll type CLEAR.\n\nDo you want to proceed?"
       ],
       "choices": [
-        { "label": "No — go back", "goto": "stay_1" },
+        { "label": "No, go back!", "goto": "stay_1" },
         {
-          "label": "Yes — clear all site data",
-          "goto": "clear_data_done_1",
-          "effects": [
-            { "type": "clearAllSiteData" }
-          ]
+          "label": "Yes, clear all site data",
+          "goto": "stay_1",
+          "effects": [{ "type": "clearAllSiteData" }]
         }
-      ]
-    },
-
-    "clear_data_done_1": {
-      "lines": [
-        "Okay.\n\nI’ll let go of everything and we’ll start fresh."
-      ],
-      "choices": [
-        { "label": "Restart", "goto": "end" }
       ]
     },
 
     "ask_mind_1": {
       "lines": [
-        "What’s on your mind right now, {{name}}?"
+        "Press Continue to start a new memory..."
       ],
       "choices": [
         { "label": "Continue", "goto": "capture_note_1" },
-        { "label": "Back to writing.", "goto": "end" }
+        { "label": "Back to writing", "goto": "end" }
       ]
     },
 
@@ -134,7 +196,7 @@
         "Thank you, {{name}}.\n\nI’ll hold that gently."
       ],
       "choices": [
-        { "label": "Back to writing.", "goto": "end" }
+        { "label": "Close", "goto": "end" }
       ]
     },
 
@@ -144,19 +206,19 @@
       ],
       "choices": [
         { "label": "Write a new memory.", "goto": "ask_mind_1" },
-        { "label": "Back to writing.", "goto": "end" }
+        { "label": "Back to writing", "goto": "end" }
       ]
     },
 
     "end_soft_1": {
       "lines": [
-        "That’s okay, {{name}}.\n\nYou don’t have to name it to let it move."
+        "It's okay, {{name}}.\n\nYou can come back to this later."
       ],
       "choices": [
-        { "label": "Back to writing.", "goto": "end" }
+        { "label": "Close", "goto": "end" }
       ]
     },
 
-    "end": { "lines": [""] }
+    "end": { "lines": ["See ya, {{name}} 👻"] }
   }
 }
