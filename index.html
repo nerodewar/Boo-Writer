@@ -764,6 +764,40 @@
       </div>
     </div>
 
+    <!-- CLEAR ALL SITE DATA MODAL (triggered from Boo choices via effect: clearAllSiteData) -->
+    <div id="clearDataOverlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="clearDataTitle">
+      <div class="card">
+        <h2 id="clearDataTitle">Clear all site data?</h2>
+        <p>
+          This clears your <b>name</b>, Boo’s <b>memories</b>, your saved <b>documents</b>, and any cached/offline data for Boo Writer on this device.
+          This cannot be undone.
+        </p>
+        <p style="margin-bottom:10px;">
+          Type <b>CLEAR</b> to confirm:
+        </p>
+
+        <input
+          id="clearDataInput"
+          class="nameInput"
+          style="opacity:1; transform:none; width:100%; text-align:left; border-radius:14px; padding:10px 12px;"
+          type="text"
+          autocomplete="off"
+          placeholder="Type CLEAR…"
+          aria-label="Type CLEAR to confirm"
+        />
+
+        <div class="cardActions" style="margin-top:12px;">
+          <button id="clearDataConfirmBtn" class="primaryBtn" type="button" disabled
+                  style="opacity:.55; cursor:not-allowed;">
+            Yes, clear everything
+          </button>
+          <button id="clearDataCancelBtn" class="secondaryBtn" type="button">Cancel</button>
+        </div>
+
+        <div id="clearDataStatus" class="nameHint" style="opacity:1; transform:none; margin-top:10px;"></div>
+      </div>
+    </div>
+
   </div>
 
   <!-- Boo companion panel -->
@@ -841,6 +875,13 @@
     const booInputWrap = $("booInputWrap");
     const booInput = $("booInput");
     const booHintEl = $("booHint");
+
+    // Clear data UI
+    const clearDataOverlay = $("clearDataOverlay");
+    const clearDataInput = $("clearDataInput");
+    const clearDataConfirmBtn = $("clearDataConfirmBtn");
+    const clearDataCancelBtn = $("clearDataCancelBtn");
+    const clearDataStatus = $("clearDataStatus");
 
     // --- Font size mapping ---
     const SIZE_SCALE = 1.55; // 12 -> ~19px
@@ -1207,6 +1248,139 @@
     }
 
     // ---------------------------
+    // Clear all site data (device-only)
+    // Triggered from Boo choice effects: { "type": "clearAllSiteData" }
+    // ---------------------------
+
+    async function deleteAllIndexedDB(){
+      // Best-effort: only works where indexedDB.databases() exists
+      try {
+        if (!("indexedDB" in window) || typeof indexedDB.databases !== "function") return;
+        const dbs = await indexedDB.databases();
+        await Promise.all((dbs || []).map(db => {
+          if (!db || !db.name) return Promise.resolve();
+          return new Promise(resolve => {
+            const req = indexedDB.deleteDatabase(db.name);
+            req.onsuccess = req.onerror = req.onblocked = () => resolve();
+          });
+        }));
+      } catch {}
+    }
+
+    async function clearAllCaches(){
+      try {
+        if (!("caches" in window)) return;
+        const keys = await caches.keys();
+        await Promise.all(keys.map(k => caches.delete(k)));
+      } catch {}
+    }
+
+    function clearAllCookiesBestEffort(){
+      // Note: cannot delete HttpOnly cookies from JS
+      try {
+        const cookies = document.cookie ? document.cookie.split(";") : [];
+        const hostParts = location.hostname.split(".");
+        const domainCandidates = [];
+        for (let i = 0; i < hostParts.length; i++){
+          domainCandidates.push(hostParts.slice(i).join("."));
+        }
+
+        const pathParts = location.pathname.split("/").filter(Boolean);
+        const pathCandidates = ["/"];
+        let running = "";
+        for (const part of pathParts){
+          running += "/" + part;
+          pathCandidates.push(running);
+        }
+
+        for (const c of cookies){
+          const eqPos = c.indexOf("=");
+          const name = (eqPos > -1 ? c.substr(0, eqPos) : c).trim();
+          if (!name) continue;
+
+          for (const domain of domainCandidates){
+            for (const path of pathCandidates){
+              document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=${path}; domain=${domain}`;
+              document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=${path}`; // host-only
+            }
+          }
+        }
+      } catch {}
+    }
+
+    async function unregisterServiceWorkers(){
+      try {
+        if (!("serviceWorker" in navigator)) return;
+        const regs = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map(r => r.unregister()));
+      } catch {}
+    }
+
+    async function clearAllSiteData(){
+      // Clear the obvious stuff first (docs, settings, Boo state, etc.)
+      try { localStorage.clear(); } catch {}
+      try { sessionStorage.clear(); } catch {}
+
+      // Then the “hidden” stores
+      await deleteAllIndexedDB();
+      await clearAllCaches();
+      clearAllCookiesBestEffort();
+      await unregisterServiceWorkers();
+
+      // Hard refresh into a clean first-run state
+      location.reload();
+    }
+
+    function openClearDataModal(){
+      // Close Boo panel so the overlay is the single focus target
+      // (Still “housed” within Boo because it’s only triggered via Boo choice.)
+      closeBooPanel();
+
+      clearDataStatus.textContent = "";
+      clearDataInput.value = "";
+      clearDataConfirmBtn.disabled = true;
+      clearDataConfirmBtn.style.opacity = ".55";
+      clearDataConfirmBtn.style.cursor = "not-allowed";
+
+      showOverlay(clearDataOverlay);
+      setTimeout(() => clearDataInput.focus(), 40);
+    }
+
+    function closeClearDataModal(){
+      hideOverlay(clearDataOverlay);
+      // Return focus to editor; user can re-summon Boo if they want
+    }
+
+    // Enable confirm only when user types CLEAR
+    clearDataInput.addEventListener("input", () => {
+      const ok = (clearDataInput.value || "").trim().toUpperCase() === "CLEAR";
+      clearDataConfirmBtn.disabled = !ok;
+      clearDataConfirmBtn.style.opacity = ok ? "1" : ".55";
+      clearDataConfirmBtn.style.cursor = ok ? "pointer" : "not-allowed";
+    });
+
+    clearDataCancelBtn.addEventListener("click", closeClearDataModal);
+
+    clearDataConfirmBtn.addEventListener("click", async () => {
+      clearDataConfirmBtn.disabled = true;
+      clearDataConfirmBtn.style.cursor = "not-allowed";
+      clearDataConfirmBtn.style.opacity = ".55";
+      clearDataStatus.textContent = "Clearing data…";
+
+      try {
+        await clearAllSiteData();
+      } catch (err) {
+        console.error(err);
+        clearDataStatus.textContent = "Something went wrong clearing data. Check console logs.";
+      }
+    });
+
+    // Click outside card closes overlay (for clearDataOverlay too)
+    clearDataOverlay.addEventListener("click", (e) => {
+      if (e.target === clearDataOverlay) closeClearDataModal();
+    });
+
+    // ---------------------------
     // Boo companion engine (JSON-only)
     // Loads scenes from: assets/boo/summonboo/scenes.json
     // ---------------------------
@@ -1306,6 +1480,10 @@
       return booData;
     }
 
+    function choiceHasEffect(effects, type){
+      return Array.isArray(effects) && effects.some(e => e && typeof e === "object" && e.type === type);
+    }
+
     function applyEffects(effects){
       const state = loadBooState();
       for (const eff of (Array.isArray(effects) ? effects : [])) {
@@ -1331,6 +1509,8 @@
             });
           }
         }
+
+        // NOTE: clearAllSiteData is handled at click-time (see renderScene)
       }
       saveBooState(state);
     }
@@ -1384,12 +1564,20 @@
         btn.className = "booChoiceBtn";
         btn.type = "button";
         btn.textContent = ch.label || "…";
+
         btn.onclick = () => {
+          // If this choice includes the clearAllSiteData effect, open the confirm modal.
+          // (This keeps the “Clear all site data” option housed within Boo flow.)
+          if (choiceHasEffect(ch.effects, "clearAllSiteData")) {
+            return openClearDataModal();
+          }
+
           applyEffects(ch.effects || []);
           const next = ch.goto || "end";
           if (next === "end") return closeBooPanel();
           renderScene(next);
         };
+
         booChoicesEl.appendChild(btn);
       }
 
@@ -1401,6 +1589,7 @@
       if (openOverlay.classList.contains("active")) return;
       if (finishOverlay.classList.contains("active")) return;
       if (privacyOverlay.classList.contains("active")) return;
+      if (clearDataOverlay.classList.contains("active")) return;
 
       try {
         const state = loadBooState();
@@ -1558,6 +1747,11 @@
     document.addEventListener("keydown", (e) => {
       if (e.key !== "Escape") return;
 
+      if (clearDataOverlay.classList.contains("active")) {
+        e.preventDefault();
+        return closeClearDataModal();
+      }
+
       if (booPanel.classList.contains("active")) {
         e.preventDefault();
         return closeBooPanel();
@@ -1597,7 +1791,7 @@
     });
 
     // Click outside card closes overlay
-    for (const ov of [openOverlay, finishOverlay, privacyOverlay]){
+    for (const ov of [openOverlay, finishOverlay, privacyOverlay, clearDataOverlay]){
       ov.addEventListener("click", (e) => {
         if (e.target === ov) hideOverlay(ov);
       });
