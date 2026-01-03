@@ -27,7 +27,7 @@
       "choices": [
         { "label": "A ghost?!", "goto": "ghost_1" },
         { "label": "Okay. Stay close.", "goto": "stay_1" },
-        { "label": "Back to writing.", "goto": "end" }
+        { "label": "Back to writing", "goto": "end" }
       ]
     },
 
@@ -36,7 +36,7 @@
         "That’s right. A friendly one.\n\nI won’t get in the way 🙂"
       ],
       "choices": [
-        { "label": "Back to writing.", "goto": "end" },
+        { "label": "Back to writing", "goto": "end" },
         { "label": "Stay with me.", "goto": "stay_1" }
       ]
     },
@@ -63,7 +63,7 @@
 
         { "label": "Clear all site data", "goto": "clear_data_1" },
 
-        { "label": "Back to writing", "goto": "end" }
+        { "label": "Close", "goto": "end" }
       ]
     },
 
@@ -120,7 +120,7 @@
 
     "keep_company_4": {
       "lines": [
-        "And remember: Just because something is invisible doesn't mean it isn't <i>real</i> -- like love, rest, or hope!"
+        "And remember: Just because something is invisible doesn't mean it isn't real -- like love, rest, or hope!"
       ],
       "choices": [
         { "label": "Tell me more...", "goto": "keep_company_5" },
@@ -130,7 +130,7 @@
 
     "keep_company_5": {
       "lines": [
-        "You know? Like, just because <i>I'm</i> invisible doesn't mean I don't care...  Now... Where <i>are</i> those crumpets? <i>Hmm...</i>"
+        "You know? Like, just because I'm invisible doesn't mean I don't care...  Now... Where are those crumpets? Hmm..."
       ],
       "choices": [
         { "label": "Write a new memory", "goto": "ask_mind_1" },
