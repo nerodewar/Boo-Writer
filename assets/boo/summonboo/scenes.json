@@ -58,7 +58,45 @@
       "choices": [
         { "label": "Write a new memory...", "goto": "ask_mind_1" },
         { "label": "Earlier… what was I thinking about?", "goto": "recall_1" },
+
+        { "label": "Clear all site data", "goto": "clear_data_1" },
+
         { "label": "Back to writing.", "goto": "end" }
+      ]
+    },
+
+    "clear_data_1": {
+      "lines": [
+        "I can do that.\n\nThis will clear your name, your memories, and any saved files for Boo Writer on this device.\n\nIt can’t be undone."
+      ],
+      "choices": [
+        { "label": "Cancel", "goto": "stay_1" },
+        { "label": "Continue", "goto": "clear_data_confirm_1" }
+      ]
+    },
+
+    "clear_data_confirm_1": {
+      "lines": [
+        "Last check, {{name}}.\n\nDo you want me to clear everything now?"
+      ],
+      "choices": [
+        { "label": "No — go back", "goto": "stay_1" },
+        {
+          "label": "Yes — clear all site data",
+          "goto": "clear_data_done_1",
+          "effects": [
+            { "type": "clearAllSiteData" }
+          ]
+        }
+      ]
+    },
+
+    "clear_data_done_1": {
+      "lines": [
+        "Okay.\n\nI’ll let go of everything and we’ll start fresh."
+      ],
+      "choices": [
+        { "label": "Restart", "goto": "end" }
       ]
     },
 
