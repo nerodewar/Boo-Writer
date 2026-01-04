@@ -1393,7 +1393,7 @@
     function loadBooState(){
       try {
         const raw = localStorage.getItem(BOO_STATE_KEY);
-        if (!raw) return { booMuted:false, affinity:0, notes:[], name:"", hasMetBoo:false, seen:{} };
+        if (!raw) return { booMuted:false, affinity:0, notes:[], name:"", hasMetBoo:false, seen:{}, keepCompanyResume:"" };
         const parsed = JSON.parse(raw);
         return {
           booMuted: !!parsed.booMuted,
@@ -1402,9 +1402,11 @@
           name: typeof parsed.name === "string" ? parsed.name : "",
           hasMetBoo: !!parsed.hasMetBoo,
           seen: (parsed.seen && typeof parsed.seen === "object") ? parsed.seen : {}
+          keepCompanyResume: typeof parsed.keepCompanyResume === "string" ? parsed.keepCompanyResume : ""
+
         };
       } catch {
-        return { booMuted:false, affinity:0, notes:[], name:"", hasMetBoo:false, seen:{} };
+        return { booMuted:false, affinity:0, notes:[], name:"", hasMetBoo:false, seen:{}, keepCompanyResume:"" };
       }
     }
     function saveBooState(state){
@@ -1566,18 +1568,28 @@
         btn.textContent = ch.label || "…";
 
         btn.onclick = () => {
-          // If this choice includes the clearAllSiteData effect, open the confirm modal.
-          // (This keeps the “Clear all site data” option housed within Boo flow.)
-          if (choiceHasEffect(ch.effects, "clearAllSiteData")) {
-            return openClearDataModal();
-          }
+  if (choiceHasEffect(ch.effects, "clearAllSiteData")) {
+    return openClearDataModal();
+  }
 
-          applyEffects(ch.effects || []);
-          const next = ch.goto || "end";
-          if (next === "end") return closeBooPanel();
-          renderScene(next);
-        };
+  // Apply effects first (so any "set keepCompanyResume" gets stored)
+  applyEffects(ch.effects || []);
 
+  const stateNow = loadBooState();
+
+  // ✅ Resume Keep Me Company instead of restarting
+  // If the user clicks "Keep me company..." from stay_1, jump to the stored resume scene.
+  if (sceneId === "stay_1" && (ch.label || "").toLowerCase().includes("keep me company")) {
+    const resume = (stateNow.keepCompanyResume || "").trim();
+    const target = resume || (ch.goto || "keep_company_1");
+    return renderScene(target);
+  }
+
+  const next = ch.goto || "end";
+  if (next === "end") return closeBooPanel();
+  renderScene(next);
+};
+        
         booChoicesEl.appendChild(btn);
       }
 
