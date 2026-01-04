@@ -1,15 +1,13 @@
 {
   "meta": {
-    "version": "1.0",
+    "version": "1.1",
     "allowSummonWhenMuted": true,
     "firstScene": "intro_1",
     "summonScene": "stay_1"
   },
   "scenes": {
     "intro_1": {
-      "lines": [
-        "Hi… I’m Boo. I live in Boo Writer! 👻"
-      ],
+      "lines": ["Hi… I’m Boo. I live in Boo Writer! 👻"],
       "choices": [
         { "label": "Who are you?", "goto": "who_1" },
         {
@@ -32,9 +30,7 @@
     },
 
     "ghost_1": {
-      "lines": [
-        "That’s right. A friendly one.\n\nI won’t get in the way 🙂"
-      ],
+      "lines": ["That’s right. A friendly one.\n\nI won’t get in the way 🙂"],
       "choices": [
         { "label": "Back to writing", "goto": "end" },
         { "label": "Stay with me.", "goto": "stay_1" }
@@ -42,12 +38,8 @@
     },
 
     "mute_1": {
-      "lines": [
-        "Okay, {{name}}.\n\nI’ll go quiet. Tap Summon Boo if you want me back."
-      ],
-      "choices": [
-        { "label": "Okay.", "goto": "end" }
-      ]
+      "lines": ["Okay, {{name}}.\n\nI’ll go quiet. Tap Summon Boo if you want me back."],
+      "choices": [{ "label": "Okay.", "goto": "end" }]
     },
 
     "stay_1": {
@@ -72,8 +64,16 @@
         "Let me tell ya, {{name}}... I've been around a loooong time... and I'm just getting started!"
       ],
       "choices": [
-        { "label": "A long time?", "goto": "keep_company_2" },
-        { "label": "Back to writing", "goto": "end" }
+        {
+          "label": "A long time?",
+          "goto": "keep_company_2",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_2" }]
+        },
+        {
+          "label": "Back to writing",
+          "goto": "end",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_1" }]
+        }
       ]
     },
 
@@ -82,8 +82,16 @@
         "Yup... I sent my intern to get me crumpets some time ago... and I'm stiiiiillll waiting...!!"
       ],
       "choices": [
-        { "label": "Tell me more...", "goto": "keep_company_3" },
-        { "label": "Close", "goto": "end" }
+        {
+          "label": "Tell me more...",
+          "goto": "keep_company_3",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_3" }]
+        },
+        {
+          "label": "Close",
+          "goto": "end",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_3" }]
+        }
       ]
     },
 
@@ -92,29 +100,57 @@
         "Hey, {{name}}... Remember: If something scares you, float a little closer... Fear often looks different up close!"
       ],
       "choices": [
-        { "label": "I'm not afraid!", "goto": "keep_company_3_not_afraid_1" },
-        { "label": "Huh, I guess so...", "goto": "keep_company_3_guess_so_1" },
-        { "label": "Close", "goto": "end" }
+        {
+          "label": "I'm not afraid!",
+          "goto": "keep_company_3_not_afraid_1",
+          "effects": [
+            { "type": "set", "key": "keepCompanyResume", "value": "keep_company_3_not_afraid_1" }
+          ]
+        },
+        {
+          "label": "Huh, I guess so...",
+          "goto": "keep_company_3_guess_so_1",
+          "effects": [
+            { "type": "set", "key": "keepCompanyResume", "value": "keep_company_3_guess_so_1" }
+          ]
+        },
+        {
+          "label": "Close",
+          "goto": "end",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_3" }]
+        }
       ]
     },
 
     "keep_company_3_not_afraid_1": {
-      "lines": [
-        "Mmmhmm. That’s what all the bravest people say first 👻"
-      ],
+      "lines": ["Mmmhmm. That’s what all the bravest people say first 👻"],
       "choices": [
-        { "label": "Continue", "goto": "keep_company_4" },
-        { "label": "Close", "goto": "end" }
+        {
+          "label": "Continue",
+          "goto": "keep_company_4",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_4" }]
+        },
+        {
+          "label": "Close",
+          "goto": "end",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_4" }]
+        }
       ]
     },
 
     "keep_company_3_guess_so_1": {
-      "lines": [
-        "Exactly. Sometimes the shadowy part is just the distance..."
-      ],
+      "lines": ["Exactly. Sometimes the shadowy part is just the distance..."],
       "choices": [
-        { "label": "Continue", "goto": "keep_company_4" },
-        { "label": "Close", "goto": "end" }
+        {
+          "label": "Continue",
+          "goto": "keep_company_4",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_4" }]
+        },
+        {
+          "label": "Close",
+          "goto": "end",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_4" }]
+        }
       ]
     },
 
@@ -123,8 +159,16 @@
         "And remember: Just because something is invisible doesn't mean it isn't real -- like love, rest, or hope!"
       ],
       "choices": [
-        { "label": "Tell me more...", "goto": "keep_company_5" },
-        { "label": "Close", "goto": "end" }
+        {
+          "label": "Tell me more...",
+          "goto": "keep_company_5",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_5" }]
+        },
+        {
+          "label": "Close",
+          "goto": "end",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_5" }]
+        }
       ]
     },
 
@@ -133,8 +177,414 @@
         "You know? Like, just because I'm invisible doesn't mean I don't care...  Now... Where are those crumpets? Hmm..."
       ],
       "choices": [
-        { "label": "Write a new memory", "goto": "ask_mind_1" },
-        { "label": "Close", "goto": "end" }
+        {
+          "label": "Wait—crumpets??",
+          "goto": "keep_company_6",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_6" }]
+        },
+        {
+          "label": "Write a new memory",
+          "goto": "ask_mind_1",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_6" }]
+        },
+        {
+          "label": "Close",
+          "goto": "end",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_6" }]
+        }
+      ]
+    },
+
+    "keep_company_6": {
+      "lines": [
+        "Oh yes. CRUMPETS. Warm. Toasty. A little butter situation. A little jam situation. A whole emotional support pastry situation."
+      ],
+      "choices": [
+        {
+          "label": "I respect that.",
+          "goto": "keep_company_7",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_7" }]
+        },
+        {
+          "label": "You have an intern?!",
+          "goto": "keep_company_7",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_7" }]
+        },
+        {
+          "label": "Close",
+          "goto": "end",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_7" }]
+        }
+      ]
+    },
+
+    "keep_company_7": {
+      "lines": [
+        "Technically… they volunteered. I did *not* post a job listing. They just appeared one day and said, “I yearn to fetch.”"
+      ],
+      "choices": [
+        {
+          "label": "That’s adorable.",
+          "goto": "keep_company_8",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_8" }]
+        },
+        {
+          "label": "Classic ghost intern behavior.",
+          "goto": "keep_company_8",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_8" }]
+        },
+        {
+          "label": "Close",
+          "goto": "end",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_8" }]
+        }
+      ]
+    },
+
+    "keep_company_8": {
+      "lines": [
+        "Anyway. I was waiting, doing my little float, and I thought… “Hm. If {{name}} is writing, I shall be nearby. For morale.”"
+      ],
+      "choices": [
+        {
+          "label": "Stay nearby.",
+          "goto": "keep_company_9",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_9" }]
+        },
+        {
+          "label": "Morale accepted.",
+          "goto": "keep_company_9",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_9" }]
+        },
+        {
+          "label": "Close",
+          "goto": "end",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_9" }]
+        }
+      ]
+    },
+
+    "keep_company_9": {
+      "lines": [
+        "We can do the cozy kind of company, if you want. No fixing. No pushing. Just… me hovering politely like a friendly lamp."
+      ],
+      "choices": [
+        {
+          "label": "Yes. Lamp Boo.",
+          "goto": "keep_company_10",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_10" }]
+        },
+        {
+          "label": "What does Lamp Boo do?",
+          "goto": "keep_company_10",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_10" }]
+        },
+        {
+          "label": "Close",
+          "goto": "end",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_10" }]
+        }
+      ]
+    },
+
+    "keep_company_10": {
+      "lines": [
+        "Lamp Boo glows gently and says things like: “You’re doing enough,” and “Your draft can be messy,” and “I will haunt any perfectionism that approaches.”"
+      ],
+      "choices": [
+        {
+          "label": "Please haunt it.",
+          "goto": "keep_company_11",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_11" }]
+        },
+        {
+          "label": "I needed that.",
+          "goto": "keep_company_11",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_11" }]
+        },
+        {
+          "label": "Close",
+          "goto": "end",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_11" }]
+        }
+      ]
+    },
+
+    "keep_company_11": {
+      "lines": [
+        "Also, if you get stuck, we can do a tiny thing. Like… write one sentence. Or even one *word*. I’ll clap quietly in the walls."
+      ],
+      "choices": [
+        {
+          "label": "One word sounds doable.",
+          "goto": "keep_company_12",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_12" }]
+        },
+        {
+          "label": "Quiet wall claps, please.",
+          "goto": "keep_company_12",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_12" }]
+        },
+        {
+          "label": "Close",
+          "goto": "end",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_12" }]
+        }
+      ]
+    },
+
+    "keep_company_12": {
+      "lines": [
+        "Perfect. One word. Something that matches your mood right now. It can be silly. It can be secret. It can be “crumpet.”"
+      ],
+      "choices": [
+        {
+          "label": "Crumpet.",
+          "goto": "keep_company_13",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_13" }]
+        },
+        {
+          "label": "I have a different word.",
+          "goto": "keep_company_13",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_13" }]
+        },
+        {
+          "label": "Close",
+          "goto": "end",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_13" }]
+        }
+      ]
+    },
+
+    "keep_company_13": {
+      "lines": [
+        "Excellent word choice, {{name}}. I am nodding gravely like a wise ghost professor. The council approves."
+      ],
+      "choices": [
+        {
+          "label": "What council?",
+          "goto": "keep_company_14",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_14" }]
+        },
+        {
+          "label": "Thank you, council.",
+          "goto": "keep_company_14",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_14" }]
+        },
+        {
+          "label": "Close",
+          "goto": "end",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_14" }]
+        }
+      ]
+    },
+
+    "keep_company_14": {
+      "lines": [
+        "The Council of Small Comforts. Their bylaws are simple: water counts, rest counts, and anything worth writing can be written badly first."
+      ],
+      "choices": [
+        {
+          "label": "I like them.",
+          "goto": "keep_company_15",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_15" }]
+        },
+        {
+          "label": "Can you remind me of that?",
+          "goto": "keep_company_15",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_15" }]
+        },
+        {
+          "label": "Close",
+          "goto": "end",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_15" }]
+        }
+      ]
+    },
+
+    "keep_company_15": {
+      "lines": [
+        "Reminder delivered. Gently. Like placing a blanket on your shoulders without making a big deal about it."
+      ],
+      "choices": [
+        {
+          "label": "That’s the vibe.",
+          "goto": "keep_company_16",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_16" }]
+        },
+        {
+          "label": "Can we just sit a second?",
+          "goto": "keep_company_16",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_16" }]
+        },
+        {
+          "label": "Close",
+          "goto": "end",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_16" }]
+        }
+      ]
+    },
+
+    "keep_company_16": {
+      "lines": [
+        "We can absolutely just sit. You don’t need the right words. I’ll be here, doing my slow little float, keeping the room kind."
+      ],
+      "choices": [
+        {
+          "label": "Thanks, Boo.",
+          "goto": "keep_company_17",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_17" }]
+        },
+        {
+          "label": "Okay… one more tiny step.",
+          "goto": "keep_company_17",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_17" }]
+        },
+        {
+          "label": "Close",
+          "goto": "end",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_17" }]
+        }
+      ]
+    },
+
+    "keep_company_17": {
+      "lines": [
+        "Proud of you, {{name}}. Not in a loud way. In a quiet way. In a “we’re still here” way.\n\nAlso—if my intern returns, I’m sharing the crumpets. Scout’s honor."
+      ],
+      "choices": [
+        {
+          "label": "Deal. Stay with me.",
+          "goto": "keep_company_18",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_18" }]
+        },
+        {
+          "label": "Back to writing",
+          "goto": "end",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_18" }]
+        },
+        {
+          "label": "Close",
+          "goto": "end",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_18" }]
+        }
+      ]
+    },
+
+    "keep_company_18": {
+      "lines": [
+        "I’m here. We can do quiet company… or you can tell me the tiniest update about what you’re working on."
+      ],
+      "choices": [
+        {
+          "label": "Quiet company.",
+          "goto": "keep_company_quiet_1",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_quiet_1" }]
+        },
+        {
+          "label": "Tiny update.",
+          "goto": "keep_company_tiny_update_1",
+          "effects": [
+            { "type": "set", "key": "keepCompanyResume", "value": "keep_company_tiny_update_1" }
+          ]
+        },
+        {
+          "label": "Close",
+          "goto": "end",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_18" }]
+        }
+      ]
+    },
+
+    "keep_company_quiet_1": {
+      "lines": [
+        "Okay. No talking needed.\n\nTake one soft breath in… and out…\n\nThat’s it. That counts."
+      ],
+      "choices": [
+        {
+          "label": "Another one.",
+          "goto": "keep_company_quiet_1",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_quiet_1" }]
+        },
+        {
+          "label": "Back to writing",
+          "goto": "end",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_18" }]
+        },
+        {
+          "label": "Close",
+          "goto": "end",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_18" }]
+        }
+      ]
+    },
+
+    "keep_company_tiny_update_1": {
+      "lines": [
+        "Tiny update received. I will file it under: “Brave little progress.”\n\nIf you want, I can ask one gentle question: what’s the *next smallest* step?"
+      ],
+      "choices": [
+        {
+          "label": "Ask me.",
+          "goto": "keep_company_next_step_1",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_next_step_1" }]
+        },
+        {
+          "label": "Not right now.",
+          "goto": "keep_company_quiet_1",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_quiet_1" }]
+        },
+        {
+          "label": "Close",
+          "goto": "end",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_18" }]
+        }
+      ]
+    },
+
+    "keep_company_next_step_1": {
+      "lines": [
+        "Okay. What’s the next smallest step you could take in under two minutes? I’ll stay right here while you choose."
+      ],
+      "choices": [
+        {
+          "label": "I picked one.",
+          "goto": "keep_company_next_step_2",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_next_step_2" }]
+        },
+        {
+          "label": "I’m not sure yet.",
+          "goto": "keep_company_next_step_1",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_next_step_1" }]
+        },
+        {
+          "label": "Close",
+          "goto": "end",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_next_step_1" }]
+        }
+      ]
+    },
+
+    "keep_company_next_step_2": {
+      "lines": [
+        "That’s the one. Tiny steps are how big things get made.\n\nNow… if my intern shows up with crumpets, we celebrate responsibly."
+      ],
+      "choices": [
+        {
+          "label": "😂",
+          "goto": "keep_company_18",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_18" }]
+        },
+        {
+          "label": "Back to writing",
+          "goto": "end",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_18" }]
+        },
+        {
+          "label": "Close",
+          "goto": "end",
+          "effects": [{ "type": "set", "key": "keepCompanyResume", "value": "keep_company_18" }]
+        }
       ]
     },
 
@@ -163,9 +613,7 @@
     },
 
     "ask_mind_1": {
-      "lines": [
-        "Press Continue to start a new memory..."
-      ],
+      "lines": ["Press Continue to start a new memory..."],
       "choices": [
         { "label": "Continue", "goto": "capture_note_1" },
         { "label": "Back to writing", "goto": "end" }
@@ -192,18 +640,12 @@
     },
 
     "saved_note_1": {
-      "lines": [
-        "Thank you, {{name}}.\n\nI’ll hold that gently."
-      ],
-      "choices": [
-        { "label": "Close", "goto": "end" }
-      ]
+      "lines": ["Thank you, {{name}}.\n\nI’ll hold that gently."],
+      "choices": [{ "label": "Close", "goto": "end" }]
     },
 
     "recall_1": {
-      "lines": [
-        "{{recallLine}}"
-      ],
+      "lines": ["{{recallLine}}"],
       "choices": [
         { "label": "Write a new memory.", "goto": "ask_mind_1" },
         { "label": "Back to writing", "goto": "end" }
@@ -211,12 +653,8 @@
     },
 
     "end_soft_1": {
-      "lines": [
-        "It's okay, {{name}}.\n\nYou can come back to this later."
-      ],
-      "choices": [
-        { "label": "Close", "goto": "end" }
-      ]
+      "lines": ["It's okay, {{name}}.\n\nYou can come back to this later."],
+      "choices": [{ "label": "Close", "goto": "end" }]
     },
 
     "end": { "lines": ["See ya, {{name}} 👻"] }
