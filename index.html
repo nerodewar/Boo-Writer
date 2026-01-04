@@ -1390,10 +1390,22 @@
 
     let booData = null;
 
+    // ✅ FIXED: missing comma + safe keepCompanyResume handling
     function loadBooState(){
       try {
         const raw = localStorage.getItem(BOO_STATE_KEY);
-        if (!raw) return { booMuted:false, affinity:0, notes:[], name:"", hasMetBoo:false, seen:{}, keepCompanyResume:"" };
+        if (!raw) {
+          return {
+            booMuted:false,
+            affinity:0,
+            notes:[],
+            name:"",
+            hasMetBoo:false,
+            seen:{},
+            keepCompanyResume:""
+          };
+        }
+
         const parsed = JSON.parse(raw);
         return {
           booMuted: !!parsed.booMuted,
@@ -1401,14 +1413,22 @@
           notes: Array.isArray(parsed.notes) ? parsed.notes : [],
           name: typeof parsed.name === "string" ? parsed.name : "",
           hasMetBoo: !!parsed.hasMetBoo,
-          seen: (parsed.seen && typeof parsed.seen === "object") ? parsed.seen : {}
+          seen: (parsed.seen && typeof parsed.seen === "object") ? parsed.seen : {},
           keepCompanyResume: typeof parsed.keepCompanyResume === "string" ? parsed.keepCompanyResume : ""
-
         };
       } catch {
-        return { booMuted:false, affinity:0, notes:[], name:"", hasMetBoo:false, seen:{}, keepCompanyResume:"" };
+        return {
+          booMuted:false,
+          affinity:0,
+          notes:[],
+          name:"",
+          hasMetBoo:false,
+          seen:{},
+          keepCompanyResume:""
+        };
       }
     }
+
     function saveBooState(state){
       localStorage.setItem(BOO_STATE_KEY, JSON.stringify(state));
     }
@@ -1567,29 +1587,31 @@
         btn.type = "button";
         btn.textContent = ch.label || "…";
 
+        // ✅ FIXED: safer resume detection (by goto), no label parsing needed
         btn.onclick = () => {
-  if (choiceHasEffect(ch.effects, "clearAllSiteData")) {
-    return openClearDataModal();
-  }
+          // If this choice includes the clearAllSiteData effect, open the confirm modal.
+          if (choiceHasEffect(ch.effects, "clearAllSiteData")) {
+            return openClearDataModal();
+          }
 
-  // Apply effects first (so any "set keepCompanyResume" gets stored)
-  applyEffects(ch.effects || []);
+          // Apply effects first (so any "set keepCompanyResume" gets stored)
+          applyEffects(ch.effects || []);
 
-  const stateNow = loadBooState();
+          // Resume Keep Me Company when selected from stay_1
+          if (sceneId === "stay_1" && (ch.goto === "keep_company_1")) {
+            const st = loadBooState();
+            const resume = (st.keepCompanyResume || "").trim();
+            if (resume) {
+              return renderScene(resume);
+            }
+            // if no resume yet, fall through to keep_company_1
+          }
 
-  // ✅ Resume Keep Me Company instead of restarting
-  // If the user clicks "Keep me company..." from stay_1, jump to the stored resume scene.
-  if (sceneId === "stay_1" && (ch.label || "").toLowerCase().includes("keep me company")) {
-    const resume = (stateNow.keepCompanyResume || "").trim();
-    const target = resume || (ch.goto || "keep_company_1");
-    return renderScene(target);
-  }
+          const next = ch.goto || "end";
+          if (next === "end") return closeBooPanel();
+          renderScene(next);
+        };
 
-  const next = ch.goto || "end";
-  if (next === "end") return closeBooPanel();
-  renderScene(next);
-};
-        
         booChoicesEl.appendChild(btn);
       }
 
